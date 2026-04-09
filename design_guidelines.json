@@ -1,0 +1,112 @@
+{
+  "theme": "dark",
+  "archetype": "5 (Jewel & Luxury)",
+  "design_philosophy": "A sophisticated, high-contrast black and gold aesthetic that conveys authority, exclusivity, and premium quality. Perfect for a top-tier corporate, tax, and legal firm.",
+  "colors": {
+    "background": "#050505",
+    "surface": "#111111",
+    "surface_elevated": "#1A1A1A",
+    "primary": "#D4AF37",
+    "primary_gradient": "linear-gradient(to right, #BF953F, #FCF6BA, #B38728)",
+    "text_main": "#FFFFFF",
+    "text_muted": "#A1A1AA",
+    "border": "rgba(212, 175, 55, 0.15)",
+    "border_hover": "rgba(212, 175, 55, 0.5)",
+    "error": "#ef4444",
+    "success": "#22c55e"
+  },
+  "typography": {
+    "font_heading": "Cormorant Garamond, serif",
+    "font_body": "Outfit, sans-serif",
+    "rules": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl font-serif font-medium tracking-tight text-white",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl font-serif font-medium tracking-tight text-white",
+      "h3": "text-xl sm:text-2xl font-serif font-medium text-white",
+      "body": "text-base font-sans leading-relaxed text-[#A1A1AA]",
+      "labels": "text-xs font-sans uppercase tracking-[0.2em] text-[#D4AF37]"
+    }
+  },
+  "layout_spacing": {
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "section_padding": "py-24 md:py-32",
+    "grid_gap": "gap-8 md:gap-12"
+  },
+  "components": {
+    "navbar": {
+      "style": "fixed top-0 w-full z-50 backdrop-blur-xl bg-[#050505]/80 border-b border-[#D4AF37]/20",
+      "links": "text-sm uppercase tracking-wider text-white hover:text-[#D4AF37] transition-colors"
+    },
+    "buttons": {
+      "primary": "bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-black font-semibold rounded-none px-8 py-3 hover:opacity-90 transition-opacity",
+      "secondary": "bg-transparent border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10 font-semibold rounded-none px-8 py-3 transition-colors"
+    },
+    "cards": {
+      "base": "bg-[#111111] border border-[#D4AF37]/15 p-8 transition-all duration-300",
+      "hover": "hover:border-[#D4AF37]/50 hover:shadow-[0_0_20px_rgba(212,175,55,0.1)] hover:-translate-y-1"
+    },
+    "inputs": {
+      "base": "bg-[#050505] border-b border-[#D4AF37]/30 text-white rounded-none px-0 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-0 w-full transition-colors"
+    }
+  },
+  "sections": {
+    "hero": {
+      "layout": "min-h-screen flex flex-col justify-center items-center text-center relative overflow-hidden pt-24",
+      "background": "Dark gold texture image with heavy black overlay (bg-black/80) to ensure text readability.",
+      "title": "Use font_heading. Apply text-transparent bg-clip-text bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] for a premium metallic text effect.",
+      "stats": "Horizontal flex, divided by thin gold lines (divider)."
+    },
+    "quienes_somos": {
+      "layout": "Grid cols-1 lg:grid-cols-2 gap-16 items-center",
+      "images": "Asymmetric layout. Use the corporate professionals image.",
+      "floating_card": "Gold gradient background card with black text, absolute positioned floating over the main image."
+    },
+    "valores": {
+      "layout": "Grid cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6",
+      "card_style": "Minimalist, icon on top, heading, short description. Use 'cards.base' and 'cards.hover'."
+    },
+    "servicios": {
+      "layout": "Dense bento grid (grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4).",
+      "style": "Cards with minimalist 1px gold border. Hover effect brightens border."
+    },
+    "bolsa_trabajo": {
+      "layout": "Two columns: left side text/value prop, right side minimalist form.",
+      "form": "Use customized Shadcn form elements. No rounded corners (rounded-none)."
+    },
+    "blog": {
+      "layout": "Tabs for categories. Grid of 3 columns for articles.",
+      "card": "Image on top, content below. Minimalist."
+    },
+    "contacto": {
+      "layout": "Grid of 3 cards for the offices.",
+      "card_cta": "WhatsApp button for each office."
+    }
+  },
+  "media": {
+    "logos": {
+      "metallic": "https://customer-assets.emergentagent.com/job_03260dd2-d13e-48a4-92a5-b5b5239906d3/artifacts/yx37bokz_metal%20Logo%201.png",
+      "white": "https://customer-assets.emergentagent.com/job_03260dd2-d13e-48a4-92a5-b5b5239906d3/artifacts/r07q1ila_Recurso%202%402x.png",
+      "grey": "https://customer-assets.emergentagent.com/job_03260dd2-d13e-48a4-92a5-b5b5239906d3/artifacts/vgmzv3ea_chrome2.png"
+    },
+    "images": {
+      "hero_background": "https://images.unsplash.com/photo-1761437855740-c894da924d79?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MDV8MHwxfHNlYXJjaHwyfHxsdXh1cnklMjBkYXJrJTIwZ29sZCUyMHRleHR1cmV8ZW58MHx8fHwxNzc1Nzc4NzQwfDA&ixlib=rb-4.1.0&q=85",
+      "quienes_somos_team": "https://images.unsplash.com/photo-1758518730037-a16581a040e8?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODB8MHwxfHNlYXJjaHwyfHxjb3Jwb3JhdGUlMjBwcm9mZXNzaW9uYWxzJTIwbWVldGluZ3xlbnwwfHx8fDE3NzU3Nzg3MzB8MA&ixlib=rb-4.1.0&q=85",
+      "blog_thumbnail_1": "https://images.unsplash.com/photo-1772588627354-ca3617853217?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njl8MHwxfHNlYXJjaHwyfHx0YXglMjBhY2NvdW50aW5nJTIwZmluYW5jZSUyMHBhcGVyd29ya3xlbnwwfHx8fDE3NzU3Nzg3MzF8MA&ixlib=rb-4.1.0&q=85",
+      "blog_thumbnail_2": "https://images.pexels.com/photos/7648046/pexels-photo-7648046.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+    }
+  },
+  "motion_and_interactions": {
+    "hover_states": "All cards should subtly lift (-translate-y-1) and increase border opacity. Text should brighten.",
+    "scroll_animations": "Fade in and slide up for sections as they enter viewport using framer-motion.",
+    "buttons": "Primary buttons should have a subtle brightness increase on hover."
+  },
+  "instructions_to_main_agent": [
+    "Install lucide-react for icons and framer-motion for animations.",
+    "Use Cormorant Garamond for headings and Outfit for body text from Google Fonts.",
+    "Ensure all backgrounds are #050505 (not standard Tailwind neutral).",
+    "Use the provided metallic logo in the Hero section, and the white or metallic logo in the Navbar.",
+    "For the 'floating golden card' in Quiénes Somos, use bg-gradient-to-r from-[#BF953F] to-[#B38728] with text-black for high contrast.",
+    "Floating WhatsApp button should have a dark aesthetic (black background, gold border, gold icon) or use standard WhatsApp green but refined.",
+    "Use the exact media URLs provided in this file. NEVER use placeholder services like via.placeholder.com.",
+    "Add data-testid attributes to all interactive elements."
+  ]
+}
