@@ -5,14 +5,16 @@
 @tailwind utilities;
 
 :root {
-    --refmex-bg: #050505;
-    --refmex-surface: #111111;
-    --refmex-surface-elevated: #1A1A1A;
-    --refmex-gold: #D4AF37;
-    --refmex-gold-light: #FCF6BA;
-    --refmex-gold-dark: #BF953F;
-    --refmex-text: #FFFFFF;
-    --refmex-text-muted: #A1A1AA;
+    --refmex-bg: #FFFFFF;
+    --refmex-bg-dark: #0A1628;
+    --refmex-surface: #F8FAFC;
+    --refmex-surface-dark: #0F2341;
+    --refmex-blue: #1E40AF;
+    --refmex-blue-light: #3B82F6;
+    --refmex-blue-dark: #1E3A8A;
+    --refmex-text-dark: #0F172A;
+    --refmex-text-light: #FFFFFF;
+    --refmex-text-muted: #64748B;
 }
 
 * {
@@ -31,7 +33,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--refmex-bg);
-    color: var(--refmex-text);
+    color: var(--refmex-text-dark);
 }
 
 .font-serif {
@@ -42,22 +44,17 @@ body {
     font-family: 'Outfit', sans-serif;
 }
 
-/* Gold gradient text */
-.text-gold-gradient {
-    background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728);
+/* Blue gradient text */
+.text-blue-gradient {
+    background: linear-gradient(to right, #1E40AF, #3B82F6, #1E3A8A);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-/* Gold gradient background */
-.bg-gold-gradient {
-    background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728);
-}
-
-/* Gold border glow */
-.border-gold-glow {
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+/* Blue gradient background */
+.bg-blue-gradient {
+    background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 50%, #1E3A8A 100%);
 }
 
 /* Scrollbar styling */
@@ -66,46 +63,46 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--refmex-bg);
+    background: #F1F5F9;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--refmex-gold);
+    background: #1E40AF;
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--refmex-gold-light);
+    background: #3B82F6;
 }
 
 /* Selection */
 ::selection {
-    background: rgba(212, 175, 55, 0.3);
-    color: white;
+    background: rgba(30, 64, 175, 0.2);
+    color: #0F172A;
 }
 
 @layer base {
     :root {
-        --background: 0 0% 2%;
-        --foreground: 0 0% 100%;
-        --card: 0 0% 7%;
-        --card-foreground: 0 0% 100%;
-        --popover: 0 0% 7%;
-        --popover-foreground: 0 0% 100%;
-        --primary: 43 74% 52%;
-        --primary-foreground: 0 0% 0%;
-        --secondary: 0 0% 10%;
-        --secondary-foreground: 0 0% 100%;
-        --muted: 0 0% 10%;
-        --muted-foreground: 0 0% 63%;
-        --accent: 43 74% 52%;
-        --accent-foreground: 0 0% 0%;
+        --background: 0 0% 100%;
+        --foreground: 222 47% 11%;
+        --card: 210 40% 98%;
+        --card-foreground: 222 47% 11%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 222 47% 11%;
+        --primary: 221 83% 40%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 210 40% 96%;
+        --secondary-foreground: 222 47% 11%;
+        --muted: 210 40% 96%;
+        --muted-foreground: 215 16% 47%;
+        --accent: 221 83% 40%;
+        --accent-foreground: 0 0% 100%;
         --destructive: 0 84.2% 60.2%;
         --destructive-foreground: 0 0% 98%;
-        --border: 43 74% 52% / 0.15;
-        --input: 43 74% 52% / 0.3;
-        --ring: 43 74% 52%;
-        --radius: 0rem;
+        --border: 214 32% 91%;
+        --input: 214 32% 91%;
+        --ring: 221 83% 40%;
+        --radius: 0.5rem;
     }
 }
 
@@ -119,17 +116,17 @@ body {
 }
 
 /* WhatsApp button pulse animation */
-@keyframes pulse-gold {
+@keyframes pulse-whatsapp {
     0%, 100% {
-        box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5);
     }
     50% {
-        box-shadow: 0 0 0 15px rgba(212, 175, 55, 0);
+        box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
     }
 }
 
-.animate-pulse-gold {
-    animation: pulse-gold 2s infinite;
+.animate-pulse-whatsapp {
+    animation: pulse-whatsapp 2s infinite;
 }
 
 /* Fade in up animation */

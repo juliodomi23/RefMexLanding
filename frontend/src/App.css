@@ -1,4 +1,4 @@
-/* REFMEX Landing Page Styles */
+/* REFMEX Landing Page Styles - Blue/White Theme */
 
 /* Navbar */
 .navbar-fixed {
@@ -7,8 +7,14 @@
     width: 100%;
     z-index: 50;
     backdrop-filter: blur(12px);
-    background-color: rgba(5, 5, 5, 0.85);
-    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    background-color: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid rgba(30, 64, 175, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.navbar-dark {
+    background-color: rgba(10, 22, 40, 0.95);
+    border-bottom: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 /* Hero Section */
@@ -22,6 +28,7 @@
     position: relative;
     overflow: hidden;
     padding-top: 80px;
+    background: linear-gradient(135deg, #0A1628 0%, #1E3A8A 50%, #0F2341 100%);
 }
 
 .hero-background {
@@ -29,7 +36,7 @@
     inset: 0;
     background-size: cover;
     background-position: center;
-    opacity: 0.3;
+    opacity: 0.15;
 }
 
 .hero-overlay {
@@ -37,9 +44,9 @@
     inset: 0;
     background: linear-gradient(
         to bottom,
-        rgba(5, 5, 5, 0.7) 0%,
-        rgba(5, 5, 5, 0.85) 50%,
-        rgba(5, 5, 5, 1) 100%
+        rgba(10, 22, 40, 0.6) 0%,
+        rgba(15, 35, 65, 0.7) 50%,
+        rgba(10, 22, 40, 0.9) 100%
     );
 }
 
@@ -47,34 +54,46 @@
     position: absolute;
     width: 600px;
     height: 600px;
-    background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
     pointer-events: none;
 }
 
 /* Cards */
 .card-refmex {
-    background-color: #111111;
-    border: 1px solid rgba(212, 175, 55, 0.15);
+    background-color: #FFFFFF;
+    border: 1px solid rgba(30, 64, 175, 0.1);
     padding: 2rem;
     transition: all 0.3s ease;
+    border-radius: 0.5rem;
 }
 
 .card-refmex:hover {
-    border-color: rgba(212, 175, 55, 0.5);
-    box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+    border-color: rgba(30, 64, 175, 0.3);
+    box-shadow: 0 10px 40px rgba(30, 64, 175, 0.1);
     transform: translateY(-4px);
+}
+
+.card-dark {
+    background-color: #0F2341;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.card-dark:hover {
+    border-color: rgba(59, 130, 246, 0.4);
+    box-shadow: 0 10px 40px rgba(59, 130, 246, 0.15);
 }
 
 /* Floating Card */
 .floating-card {
-    background: linear-gradient(to right, #BF953F, #D4AF37, #B38728);
-    color: #000;
+    background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);
+    color: #FFF;
     padding: 1.5rem 2rem;
     position: absolute;
     bottom: -20px;
     right: -20px;
     max-width: 280px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 40px rgba(30, 64, 175, 0.3);
+    border-radius: 0.5rem;
 }
 
 /* Service Cards Grid */
@@ -106,9 +125,9 @@
 .input-underline {
     background-color: transparent;
     border: none;
-    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+    border-bottom: 2px solid rgba(30, 64, 175, 0.2);
     border-radius: 0;
-    color: white;
+    color: #0F172A;
     padding: 0.75rem 0;
     width: 100%;
     transition: border-color 0.3s ease;
@@ -116,11 +135,24 @@
 
 .input-underline:focus {
     outline: none;
-    border-bottom-color: #D4AF37;
+    border-bottom-color: #1E40AF;
 }
 
 .input-underline::placeholder {
-    color: #71717a;
+    color: #94A3B8;
+}
+
+.input-dark {
+    color: #FFFFFF;
+    border-bottom-color: rgba(59, 130, 246, 0.3);
+}
+
+.input-dark:focus {
+    border-bottom-color: #3B82F6;
+}
+
+.input-dark::placeholder {
+    color: #64748B;
 }
 
 /* WhatsApp Floating Button */
@@ -137,69 +169,79 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
+    background-color: #25D366;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
 }
 
 .whatsapp-float:hover {
     transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
 }
 
 /* Stats Divider */
 .stat-divider {
     width: 1px;
     height: 60px;
-    background: linear-gradient(to bottom, transparent, #D4AF37, transparent);
+    background: linear-gradient(to bottom, transparent, #3B82F6, transparent);
 }
 
 /* Section Backgrounds */
-.section-dark {
-    background-color: #050505;
+.section-light {
+    background-color: #FFFFFF;
 }
 
-.section-surface {
-    background-color: #111111;
+.section-gray {
+    background-color: #F8FAFC;
+}
+
+.section-dark {
+    background: linear-gradient(135deg, #0A1628 0%, #0F2341 100%);
 }
 
 /* Blog Tab Styles */
 .blog-tab {
     padding: 0.75rem 1.5rem;
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    border: 1px solid rgba(30, 64, 175, 0.2);
     background: transparent;
-    color: #A1A1AA;
+    color: #64748B;
     transition: all 0.3s ease;
     cursor: pointer;
+    border-radius: 0.25rem;
 }
 
 .blog-tab:hover {
-    border-color: rgba(212, 175, 55, 0.5);
-    color: white;
+    border-color: rgba(30, 64, 175, 0.4);
+    color: #1E40AF;
 }
 
 .blog-tab.active {
-    background: linear-gradient(to right, #BF953F, #D4AF37, #B38728);
-    color: black;
+    background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);
+    color: white;
     border-color: transparent;
 }
 
 /* Office Card */
 .office-card {
-    background-color: #111111;
-    border: 1px solid rgba(212, 175, 55, 0.15);
+    background-color: #FFFFFF;
+    border: 1px solid rgba(30, 64, 175, 0.1);
     padding: 2rem;
     transition: all 0.3s ease;
+    border-radius: 0.5rem;
 }
 
 .office-card:hover {
-    border-color: rgba(212, 175, 55, 0.4);
+    border-color: rgba(30, 64, 175, 0.3);
+    box-shadow: 0 10px 30px rgba(30, 64, 175, 0.1);
 }
 
 /* Footer Links */
 .footer-link {
-    color: #A1A1AA;
+    color: #94A3B8;
     transition: color 0.3s ease;
 }
 
 .footer-link:hover {
-    color: #D4AF37;
+    color: #3B82F6;
 }
 
 /* Mobile Menu */
@@ -209,7 +251,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(5, 5, 5, 0.98);
+    background-color: rgba(10, 22, 40, 0.98);
     z-index: 60;
     display: flex;
     flex-direction: column;
@@ -219,40 +261,75 @@
 }
 
 /* Button Styles */
-.btn-gold {
-    background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728);
-    color: black;
-    font-weight: 600;
-    padding: 0.75rem 2rem;
-    transition: opacity 0.3s ease;
-}
-
-.btn-gold:hover {
-    opacity: 0.9;
-}
-
-.btn-gold-outline {
-    background: transparent;
-    border: 1px solid #D4AF37;
-    color: #D4AF37;
+.btn-blue {
+    background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);
+    color: white;
     font-weight: 600;
     padding: 0.75rem 2rem;
     transition: all 0.3s ease;
+    border-radius: 0.25rem;
 }
 
-.btn-gold-outline:hover {
-    background: rgba(212, 175, 55, 0.1);
+.btn-blue:hover {
+    box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-blue-outline {
+    background: transparent;
+    border: 2px solid #3B82F6;
+    color: #3B82F6;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    transition: all 0.3s ease;
+    border-radius: 0.25rem;
+}
+
+.btn-blue-outline:hover {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.btn-white {
+    background: #FFFFFF;
+    color: #1E40AF;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    transition: all 0.3s ease;
+    border-radius: 0.25rem;
+}
+
+.btn-white:hover {
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+}
+
+.btn-white-outline {
+    background: transparent;
+    border: 2px solid #FFFFFF;
+    color: #FFFFFF;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    transition: all 0.3s ease;
+    border-radius: 0.25rem;
+}
+
+.btn-white-outline:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 /* Value Card Icon */
 .value-icon {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    background: linear-gradient(135deg, #EEF2FF 0%, #DBEAFE 100%);
+    border-radius: 0.5rem;
     margin-bottom: 1rem;
+}
+
+.value-icon-dark {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(30, 64, 175, 0.2) 100%);
 }
 
 /* Blog Card Image */
@@ -261,6 +338,7 @@
     height: 200px;
     object-fit: cover;
     transition: transform 0.3s ease;
+    border-radius: 0.5rem 0.5rem 0 0;
 }
 
 .card-refmex:hover .blog-card-image {
