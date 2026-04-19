@@ -1,49 +1,47 @@
 # REFMEX Landing Page - PRD
 
 ## Problema Original
-Construir landing page para REFMEX (Red de Estudios Fiscales de México) - servicios fiscales, contables y legales con diseño premium azul/blanco.
+Landing page para REFMEX (Red de Estudios Fiscales de México) con contenido completo de servicios fiscales, contables y legales.
 
 ## Usuario Solicitante
 Cliente REFMEX
 
-## Requerimientos Core
-- Landing page single-page con navegación smooth scroll
-- **Tema: Azul/Blanco** (cambiado de negro/dorado)
-- Logo sin fondo blanco
-- Integración WhatsApp: 529611807499
-- Facebook: https://www.facebook.com/RefmexRedDeEstudios
-- 3 oficinas: Chiapas, Nuevo León, Estado de México
+## Requerimientos Core Implementados ✅
+- **Tema:** Azul/Blanco
+- **Logo:** Sin fondo blanco
+- **WhatsApp Principal:** 529612298120
+- **Facebook:** https://www.facebook.com/RefmexRedDeEstudios
+- **Selector de Idioma:** Español/English
 
-## Arquitectura
-- **Frontend**: React + Tailwind CSS + Framer Motion
-- **Backend**: FastAPI + MongoDB
-- **Componentes**: Shadcn/UI (tabs, select, toast)
+## Oficinas (Números Actualizados)
+1. **Chiapas:** 961 229 8120, 961 128 9177
+2. **Nuevo León:** 813 586 5600  
+3. **Estado de México:** 557 500 9770
 
-## Implementado ✅
-- [x] Navbar fija con smooth scroll
-- [x] Hero con logo, estadísticas (30+, 3, 12+), CTAs
-- [x] Sección Quiénes Somos con tarjeta flotante azul
-- [x] Sección Valores (5 tarjetas)
-- [x] Sección Servicios (13 servicios en grid)
-- [x] Bolsa de Trabajo con formulario funcional (guarda en MongoDB)
-- [x] Blog con 3 categorías en tabs (administrable)
-- [x] Contacto con 3 oficinas + links Maps
-- [x] Footer con Facebook correcto
-- [x] Botón flotante WhatsApp funcionando
-- [x] Responsive design
+## Secciones Implementadas ✅
+1. **Navbar** - Fija con selector de idioma
+2. **Hero** - Estadísticas 30+, 3, 13+
+3. **Quiénes Somos** - Contenido completo con cita destacada
+4. **Valores** - 5 tarjetas + Sección de Ética (principios a-e)
+5. **Servicios** - 13 servicios con modales detallados
+   - Cada servicio tiene botón "Contratar Servicio" → WhatsApp personalizado
+   - REPSE incluye requisitos para Personas Físicas (12) y Morales (13)
+6. **Bolsa de Trabajo** - Formulario funcional que guarda en MongoDB
+7. **Blog** - 3 categorías en tabs
+8. **Contacto** - 2 tarjetas (Chat directo + Agendar Asesoría) + 3 oficinas
+9. **Footer** - Modales de Términos, Privacidad, Descargo
 
 ## APIs Backend
-- POST /api/applications - Crear aplicación de trabajo
-- GET /api/applications - Obtener aplicaciones
+- POST /api/applications - Aplicaciones de trabajo
+- GET /api/applications - Listar aplicaciones
 - POST /api/blog/seed - Sembrar artículos
 - GET /api/blog - Obtener artículos
-- GET /api/blog?category=X - Filtrar por categoría
 
 ## Backlog P1
 - [ ] Panel admin para ver aplicaciones de trabajo
-- [ ] Editor de artículos de blog
-- [ ] Página de términos de uso completa
-- [ ] Página de política de privacidad
-- [ ] Multi-idioma (traducción)
+- [ ] Editor de artículos de blog (CMS simple)
+- [ ] Implementar traducción completa a inglés
+- [ ] Sistema de calendario real para agendar citas
+- [ ] Formulario de contacto con email
 
 ## Fecha: Enero 2025
