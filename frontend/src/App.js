@@ -7,24 +7,26 @@ import {
   ChevronRight, Shield, Eye, Award, Lock, Briefcase,
   FileText, Calculator, Scale, Building2, Users, 
   FileCheck, Gavel, TrendingUp, ShieldCheck, ClipboardCheck,
-  Banknote, Clock, ArrowRight, MessageCircle
+  Banknote, Clock, ArrowRight, MessageCircle, Globe,
+  Calendar, ExternalLink, ChevronDown
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./components/ui/dialog";
 import { Toaster, toast } from "sonner";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-// WhatsApp configuration - formato correcto para México
-const WHATSAPP_NUMBER = "529611807499";
+// WhatsApp configuration
+const WHATSAPP_MAIN = "529612298120";
 const WHATSAPP_MESSAGE = encodeURIComponent("Hola, me gustaría agendar una asesoría con REFMEX.");
-const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`;
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_MAIN}?text=${WHATSAPP_MESSAGE}`;
 
 // Facebook URL
 const FACEBOOK_URL = "https://www.facebook.com/RefmexRedDeEstudios";
 
-// Logo URL - usando el logo blanco sin fondo
+// Logo URL
 const LOGO_WHITE = "https://customer-assets.emergentagent.com/job_03260dd2-d13e-48a4-92a5-b5b5239906d3/artifacts/r07q1ila_Recurso%202%402x.png";
 
 // Image URLs
@@ -34,52 +36,183 @@ const IMAGES = {
   values: "https://images.unsplash.com/photo-1621510007869-775c2657e580?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODR8MHwxfHNlYXJjaHwyfHxjb3Jwb3JhdGUlMjBleGVjdXRpdmVzJTIwbWVldGluZyUyMGJ1c2luZXNzJTIwcHJvZmVzc2lvbmFsc3xlbnwwfHx8fDE3NzU3Nzg4Mjd8MA&ixlib=rb-4.1.0&q=85"
 };
 
-// Services data
+// Services data with detailed descriptions
 const SERVICES = [
-  { icon: FileText, title: "Auditoría", desc: "Servicios de auditoría financiera y operacional" },
-  { icon: Calculator, title: "Contabilidad", desc: "Servicios contables integrales" },
-  { icon: Banknote, title: "Impuestos", desc: "Asesoría fiscal especializada" },
-  { icon: FileCheck, title: "Registro REPSE", desc: "Tramitación y renovación del Registro" },
-  { icon: TrendingUp, title: "Precios de Transferencia", desc: "Estudios y documentación" },
-  { icon: Scale, title: "Acuerdos Conclusivos", desc: "Representación ante el SAT" },
-  { icon: Gavel, title: "Peritajes Contables", desc: "Análisis forense y dictámenes" },
-  { icon: Building2, title: "Planeación Estratégica", desc: "Consultoría fiscal y financiera" },
-  { icon: Shield, title: "Defensa Penal-Fiscal", desc: "Representación legal especializada" },
-  { icon: Users, title: "Asesoría y Consultoría", desc: "Acompañamiento profesional integral" },
-  { icon: ShieldCheck, title: "Compliance Fiscal", desc: "Cumplimiento normativo tributario" },
-  { icon: ClipboardCheck, title: "Compliance Laboral", desc: "Verificación de obligaciones laborales" },
-  { icon: Lock, title: "Prevención Lavado de Dinero", desc: "Soporte legal en manuales antilavado" }
+  { 
+    icon: FileText, 
+    title: "Auditoría", 
+    desc: "Revisión independiente de información financiera",
+    fullDesc: "La auditoría es la revisión independiente de la información financiera de una empresa para verificar su veracidad y cumplimiento normativo. Para llevarla a cabo, es indispensable contar con estados financieros completos, registros contables actualizados, documentación soporte (facturas, contratos) y acceso a la información interna.",
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Auditoría"
+  },
+  { 
+    icon: Calculator, 
+    title: "Contabilidad", 
+    desc: "Registro y control de operaciones financieras",
+    fullDesc: "La contabilidad implica el registro y control de todas las operaciones financieras. Requiere comprobantes fiscales válidos, un catálogo de cuentas adecuado, sistemas contables confiables y el cumplimiento de normas vigentes para garantizar información clara y útil.",
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Contabilidad"
+  },
+  { 
+    icon: Banknote, 
+    title: "Impuestos", 
+    desc: "Cálculo, declaración y pago de contribuciones",
+    fullDesc: "Los impuestos comprenden el cálculo, declaración y pago de contribuciones. Es indispensable contar con RFC activo, e.firma vigente, registros contables correctos y cumplimiento en tiempo y forma de las obligaciones fiscales.",
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Impuestos"
+  },
+  { 
+    icon: FileCheck, 
+    title: "Registro REPSE", 
+    desc: "Tramitación y renovación del Registro",
+    fullDesc: "Tramitación y renovación del Registro de Prestadoras de Servicios Especializados u Obras Especializadas.",
+    isREPSE: true,
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Registro REPSE"
+  },
+  { 
+    icon: TrendingUp, 
+    title: "Precios de Transferencia", 
+    desc: "Estudios y documentación",
+    fullDesc: "Los precios de transferencia regulan las operaciones entre partes relacionadas para asegurar que se realicen a valor de mercado. Se requiere documentación comprobatoria, estudios técnicos, análisis funcional y evidencia de comparabilidad conforme a la ley.",
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Precios de Transferencia"
+  },
+  { 
+    icon: Scale, 
+    title: "Acuerdos Conclusivos", 
+    desc: "Representación ante el SAT",
+    fullDesc: "Los acuerdos conclusivos son mecanismos para resolver controversias fiscales con la autoridad sin llegar a juicio. Es necesario tener una auditoría en curso, pruebas documentales suficientes y disposición para negociar bajo supervisión de la autoridad competente.",
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Acuerdos Conclusivos"
+  },
+  { 
+    icon: Gavel, 
+    title: "Peritajes Contables", 
+    desc: "Análisis forense y dictámenes",
+    fullDesc: "Los peritajes contables consisten en la emisión de una opinión técnica sobre información financiera en procesos legales. Se requiere información contable completa, documentación soporte y la intervención de un perito certificado.",
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Peritajes Contables"
+  },
+  { 
+    icon: Building2, 
+    title: "Planeación Estratégica", 
+    desc: "Consultoría fiscal y financiera",
+    fullDesc: "La planeación estratégica fiscal y financiera busca optimizar recursos y reducir riesgos. Es indispensable contar con información financiera confiable, proyecciones, análisis de riesgos y conocimiento actualizado de la legislación.",
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Planeación Estratégica Fiscal y Financiera"
+  },
+  { 
+    icon: Shield, 
+    title: "Defensa Penal-Fiscal", 
+    desc: "Representación legal especializada",
+    fullDesc: "La defensa penal-fiscal implica la representación legal ante delitos fiscales. Requiere documentación probatoria, estrategia legal sólida, cumplimiento de plazos procesales y asesoría especializada.",
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Defensa Penal-Fiscal"
+  },
+  { 
+    icon: Users, 
+    title: "Asesoría y Consultoría", 
+    desc: "Acompañamiento profesional integral",
+    fullDesc: "La asesoría y consultoría fiscal brinda orientación para el correcto cumplimiento de obligaciones. Es necesario proporcionar información veraz, documentación completa y mantener comunicación constante con el asesor.",
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Asesoría y Consultoría Fiscal"
+  },
+  { 
+    icon: ShieldCheck, 
+    title: "Compliance Fiscal", 
+    desc: "Cumplimiento normativo tributario",
+    fullDesc: "El compliance fiscal asegura que la empresa cumpla con todas sus obligaciones tributarias. Requiere controles internos, políticas claras, revisiones periódicas y actualización constante ante cambios legales.",
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Compliance Fiscal"
+  },
+  { 
+    icon: ClipboardCheck, 
+    title: "Compliance Laboral", 
+    desc: "Verificación de obligaciones laborales",
+    fullDesc: "El compliance laboral busca el cumplimiento de normas en materia de trabajo. Es indispensable contar con contratos laborales, registros de nómina, cumplimiento de prestaciones y apego a la legislación vigente.",
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Compliance Laboral"
+  },
+  { 
+    icon: Lock, 
+    title: "Compliance Corporativo", 
+    desc: "Cumplimiento normativo empresarial",
+    fullDesc: "El compliance corporativo asegura que la empresa cumpla con todas las normativas aplicables a su operación, incluyendo gobierno corporativo, prevención de riesgos y mejores prácticas empresariales.",
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Compliance Corporativo"
+  }
 ];
 
-// Values data
+// REPSE Requirements
+const REPSE_FISICAS = [
+  "Constancia de situación fiscal",
+  "Opinión (IMSS-SAT-INFONAVIT)",
+  "Identificación oficial",
+  "CURP",
+  "Nómina en PDF",
+  "Tarjeta patronal",
+  "SUA (Resumen de liquidación y cédulas cuotas-obrera)",
+  "Comprobante de domicilio (predial, luz, teléfono)",
+  "E.firma del SAT",
+  "Acuse de inscripción al RFC",
+  "Folio de afiliación INFONACOT",
+  "Formato 17 o 28 de REPSE"
+];
+
+const REPSE_MORALES = [
+  "Acta constitutiva",
+  "Poder Notarial",
+  "Opinión (IMSS-SAT-INFONAVIT)",
+  "Identificación oficial del Representante",
+  "CURP del representante",
+  "Nómina en PDF",
+  "Tarjeta patronal",
+  "SUA (Resumen de liquidación y cédulas cuotas-obrera)",
+  "Comprobante de domicilio (predial, luz, teléfono)",
+  "E.firma del SAT",
+  "Constancia de situación fiscal",
+  "Folio de afiliación INFONACOT",
+  "Formato 17 o 28 de REPSE"
+];
+
+// Values data with full descriptions
 const VALUES = [
-  { icon: Shield, title: "Integridad", desc: "Actuamos con honestidad, lealtad y veracidad en todas nuestras relaciones profesionales" },
-  { icon: Eye, title: "Objetividad", desc: "Mantenemos juicio profesional imparcial, evitando sesgos y conflictos de interés" },
-  { icon: Award, title: "Diligencia y Competencia", desc: "Trabajo cuidadoso, responsable y actualización constante de conocimientos" },
-  { icon: Lock, title: "Confidencialidad", desc: "Protegemos la información de nuestros clientes con máxima seguridad" },
-  { icon: Briefcase, title: "Comportamiento Profesional", desc: "Cumplimos con las leyes, normas y regulaciones aplicables" }
+  { 
+    icon: Shield, 
+    title: "Integridad", 
+    desc: "Actuar con honestidad, lealtad y veracidad en nuestras relaciones profesionales. Además, no asociarse con información falsa, confusa o presentada de manera descuidada. Si se relacionan con información de ese tipo, deben tomar medidas para desvincularse de ella."
+  },
+  { 
+    icon: Eye, 
+    title: "Objetividad", 
+    desc: "Mantenemos en nuestro trabajo un juicio profesional imparcial, evitando prejuicios, conflictos de interés o influencias indebidas de terceros. Si alguna situación afecta a la objetividad, la firma no realiza el servicio profesional, para asegurar decisiones justas y confiables."
+  },
+  { 
+    icon: Award, 
+    title: "Diligencia y Competencia", 
+    desc: "Realizar nuestro trabajo con cuidado, responsabilidad y conforme a las normas profesionales. Además, de mantenernos actualizados para ofrecer servicios competentes, aplicando siempre un juicio profesional adecuado."
+  },
+  { 
+    icon: Lock, 
+    title: "Confidencialidad", 
+    desc: "Proteger la información obtenida de los usuarios. No deben revelarse información confidencial sin autorización, salvo cuando exista una obligación legal o profesional. Tampoco pueden utilizarse información para beneficio propio o de terceros."
+  },
+  { 
+    icon: Briefcase, 
+    title: "Comportamiento Profesional", 
+    desc: "Cumplir con las leyes, normas y reglamentos aplicables en el ejercicio de su profesión. Asimismo, deben evitar cualquier conducta o acción que pueda desacreditar o dañar la reputación de la profesión contable."
+  }
 ];
 
-// Offices data con números formateados correctamente
+// Offices data with updated phone numbers
 const OFFICES = [
   { 
     name: "Sede Chiapas", 
     address: "Calle 13a. Poniente Sur 985, Chiapas", 
-    phone: "961 180 7499",
-    whatsapp: "529611807499",
+    phones: ["961 229 8120", "961 128 9177"],
+    whatsapp: "529612298120",
     maps: "https://www.google.com/maps/search/Calle%2013a.%20Poniente%20Sur%20985/@16.74809455871582,-93.12777709960938,17z?hl=es"
   },
   { 
     name: "Sede Nuevo León", 
     address: "Pino Sur 209, Valle del Virrey, CP 67257", 
-    phone: "813 586 5600",
+    phones: ["813 586 5600"],
     whatsapp: "528135865600",
     maps: "https://www.google.com/maps?q=Pino+Sur+209,+Valle+Sur,+67257+Cdad.+Benito+Ju%C3%A1rez,+N.L."
   },
   { 
     name: "Sede Estado de México", 
     address: "Valle de los Piracantos 48, Izcalli del Valle, Tultitlán, CP 54945", 
-    phone: "557 500 9770",
+    phones: ["557 500 9770"],
     whatsapp: "525575009770",
     maps: "https://www.google.com/maps/search/Valle%20de%20los%20piracantos%2048%20izcalli%20del%20valle%20tultitlan/@19.58583223,-99.18466924,17z?hl=es"
   }
@@ -95,8 +228,76 @@ const JOB_POSITIONS = [
   "Laboralista"
 ];
 
+// Languages
+const LANGUAGES = [
+  { code: 'es', name: 'Español', flag: '🇲🇽' },
+  { code: 'en', name: 'English', flag: '🇺🇸' }
+];
+
+// Service Detail Modal
+const ServiceModal = ({ service, isOpen, onClose }) => {
+  const whatsappUrl = `https://wa.me/${WHATSAPP_MAIN}?text=${encodeURIComponent(service.whatsappMsg)}`;
+  
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="bg-white max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="font-serif text-2xl text-slate-800 flex items-center gap-3">
+            <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+              <service.icon size={24} className="text-blue-600" />
+            </div>
+            {service.title}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="mt-4">
+          <p className="text-slate-600 leading-relaxed mb-6">{service.fullDesc}</p>
+          
+          {service.isREPSE && (
+            <div className="space-y-6">
+              <div>
+                <h4 className="font-semibold text-slate-800 mb-3">Requisitos para Personas Físicas:</h4>
+                <ol className="list-decimal list-inside space-y-1 text-slate-600 text-sm">
+                  {REPSE_FISICAS.map((req, idx) => (
+                    <li key={idx}>{req}</li>
+                  ))}
+                </ol>
+                <p className="text-slate-500 text-sm mt-2 italic">
+                  Datos adicionales: Dos teléfonos y correos, relación de activos de la empresa, registros y/o certificaciones, entre otros.
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-slate-800 mb-3">Requisitos para Personas Morales:</h4>
+                <ol className="list-decimal list-inside space-y-1 text-slate-600 text-sm">
+                  {REPSE_MORALES.map((req, idx) => (
+                    <li key={idx}>{req}</li>
+                  ))}
+                </ol>
+                <p className="text-slate-500 text-sm mt-2 italic">
+                  Datos adicionales: Dos teléfonos y correos, relación de activos de la empresa, registros y/o certificaciones, entre otros.
+                </p>
+              </div>
+            </div>
+          )}
+          
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-blue w-full mt-6 flex items-center justify-center gap-2"
+            data-testid={`service-cta-${service.title.toLowerCase().replace(/\s/g, '-')}`}
+          >
+            <MessageCircle size={18} />
+            Contratar Servicio
+          </a>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 // Navbar Component
-const Navbar = () => {
+const Navbar = ({ language, setLanguage }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -133,7 +334,7 @@ const Navbar = () => {
             </a>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-8">
+            <div className="hidden lg:flex items-center gap-6">
               {navLinks.map((link) => (
                 <a
                   key={link.href}
@@ -145,6 +346,22 @@ const Navbar = () => {
                   {link.label}
                 </a>
               ))}
+              
+              {/* Language Selector */}
+              <Select value={language} onValueChange={setLanguage}>
+                <SelectTrigger className={`w-auto gap-2 border-0 bg-transparent ${scrolled ? 'text-slate-700' : 'text-white'}`}>
+                  <Globe size={16} />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  {LANGUAGES.map((lang) => (
+                    <SelectItem key={lang.code} value={lang.code}>
+                      {lang.flag} {lang.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
               <a
                 href={WHATSAPP_URL}
                 target="_blank"
@@ -276,7 +493,7 @@ const HeroSection = () => {
             </div>
             <div className="stat-divider hidden sm:block" />
             <div className="text-center px-8">
-              <div className="text-blue-300 text-4xl sm:text-5xl font-serif font-medium">12+</div>
+              <div className="text-blue-300 text-4xl sm:text-5xl font-serif font-medium">13+</div>
               <div className="text-blue-100/70 text-sm uppercase tracking-wider mt-1">Servicios Especializados</div>
             </div>
           </div>
@@ -286,7 +503,7 @@ const HeroSection = () => {
   );
 };
 
-// About Section
+// About Section with updated content
 const AboutSection = () => {
   return (
     <section id="nosotros" className="section-light py-24 md:py-32" data-testid="about-section">
@@ -308,23 +525,32 @@ const AboutSection = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Text Content */}
             <div className="space-y-6">
+              <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-600">
+                <p className="text-blue-800 font-medium italic">
+                  "Todo gran proyecto comienza con una idea clara: ayudar a las personas y empresas a tomar mejores decisiones financieras."
+                </p>
+              </div>
+              
               <p className="text-slate-600 leading-relaxed">
-                <span className="text-blue-700 font-semibold">REFMEX</span> nació de la necesidad de compartir experiencia entre fiscalistas y abogados, socios del Instituto Mexicano de Contadores Públicos con hasta 30 años de experiencia en el mercado.
+                Nuestra Firma <span className="text-blue-700 font-semibold">REFMEX</span> nació por la necesidad de compartir experiencias entre fiscalistas y abogados, actualmente todos socios ante el Instituto Mexicano Contadores Públicos, que avalan la capacidad técnica para el ejercicio de la profesión.
               </p>
               <p className="text-slate-600 leading-relaxed">
-                Nuestra filosofía se basa en que la contabilidad no es solo cumplimiento fiscal, sino brindar tranquilidad a nuestros clientes aplicando criterio prudencial en cada decisión.
+                Desde nuestros inicios entendimos que la contaduría no solo consiste en cumplir obligaciones fiscales, sino en brindar tranquilidad a los empresarios aplicando un criterio prudencial.
               </p>
               <p className="text-slate-600 leading-relaxed">
-                Nuestro propósito es generar un impacto significativo en cada empresa y persona que asesoramos, impulsados por la integridad, el servicio al interés público e innovación constante.
+                Nuestros socios cuentan con experiencia de hasta <span className="font-semibold">30 años</span>, cada uno en su campo como especialista.
+              </p>
+              <p className="text-slate-600 leading-relaxed">
+                Creemos firmemente que una firma contable debe ser más que un proveedor de servicios; debe ser un <span className="text-blue-700 font-semibold">aliado estratégico para el crecimiento</span> de cada negocio.
               </p>
 
               {/* Features Grid */}
               <div className="grid grid-cols-2 gap-4 mt-8">
                 {[
-                  { icon: Clock, title: "Experiencia", desc: "30 años en el mercado" },
-                  { icon: Users, title: "Equipo", desc: "Contadores, abogados y administradores" },
-                  { icon: MapPin, title: "Estados", desc: "Monterrey, Edo. Méx. y Chiapas" },
-                  { icon: Award, title: "Vanguardia", desc: "Cumpliendo con las NDPC del IMCP" }
+                  { icon: Clock, title: "Experiencia", desc: "Hasta 30 años de experiencia" },
+                  { icon: Users, title: "Equipo", desc: "Socios del IMCP certificados" },
+                  { icon: MapPin, title: "Presencia", desc: "3 estados de México" },
+                  { icon: Award, title: "Certificación", desc: "Capacidad técnica avalada" }
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-start gap-3">
                     <div className="p-2 bg-blue-50 rounded-lg">
@@ -350,11 +576,24 @@ const AboutSection = () => {
                 />
               </div>
               <div className="floating-card" data-testid="about-floating-card">
-                <p className="font-serif text-lg font-medium">Vanguardia</p>
+                <p className="font-serif text-lg font-medium">¿Qué Hacemos?</p>
                 <p className="text-sm mt-1 opacity-90">
-                  Cumpliendo con las NDPC que exige el Instituto Mexicano de Contadores Públicos
+                  Nos especializamos en auditoría, aseguramiento, consultoría, asesoría fiscal y servicios relacionados.
                 </p>
               </div>
+            </div>
+          </div>
+          
+          {/* What We Do Section */}
+          <div className="mt-20 bg-slate-50 p-8 rounded-lg">
+            <h3 className="font-serif text-2xl text-slate-800 mb-6">Nuestro Compromiso</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              <p className="text-slate-600 leading-relaxed">
+                Nuestro propósito es generar un <span className="font-semibold">impacto significativo</span> en cada cliente y en cada proyecto en el que participamos. Creemos en el valor de la integridad, el servicio al interés público y la innovación como motores de crecimiento.
+              </p>
+              <p className="text-slate-600 leading-relaxed">
+                Colaboramos estrechamente con nuestros clientes para ayudarles a alcanzar sus objetivos, sin importar el tamaño de sus retos o aspiraciones. Nuestro enfoque se basa en acompañarlos con <span className="font-semibold">soluciones estratégicas, confianza y profesionalismo</span> para construir juntos un futuro mejor.
+              </p>
             </div>
           </div>
         </motion.div>
@@ -363,8 +602,16 @@ const AboutSection = () => {
   );
 };
 
-// Values Section
+// Values Section with Ethics
 const ValuesSection = () => {
+  const ethicsPrinciples = [
+    { letter: "a", title: "Integridad", desc: "Ser leal, veraz y honrado en todas las relaciones profesionales y de negocios." },
+    { letter: "b", title: "Objetividad", desc: "Evitar prejuicios, conflictos de interés o influencia indebida de terceros que afecten el juicio profesional o de negocios." },
+    { letter: "c", title: "Diligencia y competencia profesionales", desc: "Mantener el conocimiento profesional y las habilidades al nivel necesario que aseguren que el cliente o la entidad para la que se trabaja reciben servicios profesionales competentes basados en los últimos avances de la práctica, la legislación y las técnicas, y actuar con diligencia y de conformidad con las normas técnicas y profesionales aplicables." },
+    { letter: "d", title: "Confidencialidad", desc: "Respetar la confidencialidad de la información obtenida como resultado de relaciones profesionales o de negocios y, por lo tanto, no revelar dicha información a terceros sin la autorización apropiada y específica, a menos que haya un derecho u obligación legal o profesional de hacerlo, ni usar la información para provecho personal o de terceros." },
+    { letter: "e", title: "Comportamiento profesional", desc: "Cumplir con las leyes y reglamentos relevantes, y evitar cualquier acción que desacredite a la profesión." }
+  ];
+
   return (
     <section id="valores" className="section-gray py-24 md:py-32 relative overflow-hidden" data-testid="values-section">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -377,14 +624,11 @@ const ValuesSection = () => {
           <div className="text-center mb-16">
             <p className="text-xs uppercase tracking-[0.2em] text-blue-600 mb-4">Ética y Profesionalismo</p>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium text-slate-800" data-testid="values-title">
-              Nuestros Valores
+              Valores que nos Distinguen
             </h2>
-            <p className="text-slate-500 text-lg mt-4 max-w-2xl mx-auto">
-              Nuestro compromiso con la excelencia se fundamenta en valores éticos inquebrantables
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {VALUES.map((value, idx) => (
               <motion.div
                 key={idx}
@@ -392,24 +636,38 @@ const ValuesSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: idx * 0.1 }}
-                className="card-refmex text-center"
+                className="card-refmex"
                 data-testid={`value-card-${idx}`}
               >
-                <div className="value-icon mx-auto">
+                <div className="value-icon">
                   <value.icon size={24} className="text-blue-600" />
                 </div>
-                <h3 className="font-serif text-lg text-slate-800 mb-2">{value.title}</h3>
-                <p className="text-slate-500 text-sm">{value.desc}</p>
+                <h3 className="font-serif text-xl text-slate-800 mb-3">{value.title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{value.desc}</p>
               </motion.div>
             ))}
           </div>
 
-          <div className="mt-16 overflow-hidden rounded-lg">
-            <img 
-              src={IMAGES.values} 
-              alt="Profesionales REFMEX" 
-              className="w-full h-64 object-cover"
-            />
+          {/* Ethics Section */}
+          <div className="bg-white p-8 rounded-lg border border-blue-100">
+            <h3 className="font-serif text-2xl text-slate-800 mb-6 flex items-center gap-3">
+              <Shield className="text-blue-600" size={28} />
+              Ética Profesional
+            </h3>
+            <p className="text-slate-600 mb-6">
+              Aplicamos a cabalidad los principios fundamentales establecidos en el código de ética profesional del contador independiente:
+            </p>
+            <div className="space-y-4">
+              {ethicsPrinciples.map((principle, idx) => (
+                <div key={idx} className="flex gap-4">
+                  <span className="text-blue-600 font-semibold">{principle.letter})</span>
+                  <div>
+                    <span className="font-semibold text-slate-800">{principle.title}.</span>
+                    <span className="text-slate-600 ml-1">{principle.desc}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </motion.div>
       </div>
@@ -417,8 +675,10 @@ const ValuesSection = () => {
   );
 };
 
-// Services Section
+// Services Section with Modal
 const ServicesSection = () => {
+  const [selectedService, setSelectedService] = useState(null);
+
   return (
     <section id="servicios" className="section-light py-24 md:py-32 relative" data-testid="services-section">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -431,7 +691,7 @@ const ServicesSection = () => {
           <div className="text-center mb-16">
             <p className="text-xs uppercase tracking-[0.2em] text-blue-600 mb-4">Lo que hacemos</p>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium text-slate-800" data-testid="services-title">
-              Soluciones Integrales para tu Empresa
+              Nuestros Servicios
             </h2>
             <p className="text-slate-500 text-lg mt-4 max-w-2xl mx-auto">
               Servicios especializados en materia fiscal, contable y legal adaptados a tus necesidades
@@ -446,14 +706,18 @@ const ServicesSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
-                className="card-refmex"
+                className="card-refmex cursor-pointer group"
+                onClick={() => setSelectedService(service)}
                 data-testid={`service-card-${idx}`}
               >
-                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
                   <service.icon size={24} className="text-blue-600" />
                 </div>
                 <h3 className="font-serif text-lg text-slate-800 mb-2">{service.title}</h3>
-                <p className="text-slate-500 text-sm">{service.desc}</p>
+                <p className="text-slate-500 text-sm mb-4">{service.desc}</p>
+                <span className="text-blue-600 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                  Ver más <ChevronRight size={16} />
+                </span>
               </motion.div>
             ))}
           </div>
@@ -472,6 +736,14 @@ const ServicesSection = () => {
           </div>
         </motion.div>
       </div>
+
+      {selectedService && (
+        <ServiceModal 
+          service={selectedService} 
+          isOpen={!!selectedService} 
+          onClose={() => setSelectedService(null)} 
+        />
+      )}
     </section>
   );
 };
@@ -540,7 +812,7 @@ const JobSection = () => {
           <div className="text-center mb-16">
             <p className="text-xs uppercase tracking-[0.2em] text-blue-400 mb-4">Carreras</p>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium text-white" data-testid="job-title">
-              Únete a Nuestro Equipo
+              Postúlate y Trabaja en REFMEX
             </h2>
             <p className="text-blue-100/70 text-lg mt-4">
               Forma parte de una red de profesionales comprometidos con la excelencia
@@ -548,23 +820,38 @@ const JobSection = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-            {/* Left Content */}
+            {/* Left Content - Positions */}
             <div>
-              <h3 className="font-serif text-2xl text-white mb-6">¿Por qué trabajar con nosotros?</h3>
-              <ul className="space-y-4">
-                {[
-                  "Ambiente de trabajo profesional y colaborativo",
-                  "Oportunidades de crecimiento y desarrollo",
-                  "Capacitación continua y actualización",
-                  "Proyectos desafiantes con clientes diversos",
-                  "Compensación competitiva"
-                ].map((item, idx) => (
-                  <li key={idx} className="flex items-center gap-3 text-blue-100/80">
-                    <ChevronRight size={16} className="text-blue-400" />
-                    {item}
-                  </li>
+              <h3 className="font-serif text-2xl text-white mb-6">Puestos Disponibles</h3>
+              <div className="grid grid-cols-2 gap-4">
+                {JOB_POSITIONS.map((position, idx) => (
+                  <div 
+                    key={idx} 
+                    className="bg-blue-900/30 border border-blue-500/20 p-4 rounded-lg hover:border-blue-400/40 transition-colors cursor-pointer"
+                    onClick={() => setFormData({ ...formData, puesto: position })}
+                  >
+                    <Briefcase size={20} className="text-blue-400 mb-2" />
+                    <p className="text-white text-sm font-medium">{position}</p>
+                  </div>
                 ))}
-              </ul>
+              </div>
+              
+              <div className="mt-8">
+                <h4 className="text-white font-medium mb-4">¿Por qué trabajar con nosotros?</h4>
+                <ul className="space-y-3">
+                  {[
+                    "Ambiente de trabajo profesional y colaborativo",
+                    "Oportunidades de crecimiento y desarrollo",
+                    "Capacitación continua y actualización",
+                    "Proyectos desafiantes con clientes diversos"
+                  ].map((item, idx) => (
+                    <li key={idx} className="flex items-center gap-3 text-blue-100/80">
+                      <ChevronRight size={16} className="text-blue-400" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
             {/* Form */}
@@ -605,14 +892,14 @@ const JobSection = () => {
                   </div>
                   <div>
                     <label className="text-xs uppercase tracking-wider text-blue-300 block mb-2">
-                      Puesto de Interés *
+                      Puesto al que se Postula *
                     </label>
                     <Select 
                       value={formData.puesto} 
                       onValueChange={(value) => setFormData({ ...formData, puesto: value })}
                     >
                       <SelectTrigger className="bg-transparent border-0 border-b-2 border-blue-500/30 rounded-none text-white focus:ring-0 focus:border-blue-400 h-12" data-testid="job-select-puesto">
-                        <SelectValue placeholder="Seleccionar" />
+                        <SelectValue placeholder="Seleccionar puesto" />
                       </SelectTrigger>
                       <SelectContent className="bg-slate-800 border-blue-500/30">
                         {JOB_POSITIONS.map((pos, idx) => (
@@ -641,7 +928,7 @@ const JobSection = () => {
 
                 <div>
                   <label className="text-xs uppercase tracking-wider text-blue-300 block mb-2">
-                    Salario Mensual Deseado
+                    ¿Cuánto Desea Ganar? (Mensual)
                   </label>
                   <input
                     type="text"
@@ -655,7 +942,7 @@ const JobSection = () => {
 
                 <div>
                   <label className="text-xs uppercase tracking-wider text-blue-300 block mb-2">
-                    Adjuntar CV *
+                    Adjunta tu CV *
                   </label>
                   <input
                     type="file"
@@ -721,10 +1008,10 @@ const BlogSection = () => {
           <div className="text-center mb-16">
             <p className="text-xs uppercase tracking-[0.2em] text-blue-600 mb-4">Recursos</p>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium text-slate-800" data-testid="blog-title">
-              Conocimiento que Impulsa
+              Blog
             </h2>
             <p className="text-slate-500 text-lg mt-4">
-              Artículos especializados, actualizaciones normativas y consejos prácticos
+              Contenido especializado para mantenerte informado
             </p>
           </div>
 
@@ -795,8 +1082,10 @@ const BlogSection = () => {
   );
 };
 
-// Contact Section
+// Contact Section with Calendar
 const ContactSection = () => {
+  const [showCalendar, setShowCalendar] = useState(false);
+
   return (
     <section id="contacto" className="section-light py-24 md:py-32" data-testid="contact-section">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -816,27 +1105,53 @@ const ContactSection = () => {
             </p>
           </div>
 
-          {/* Main CTA Card */}
-          <div className="bg-blue-gradient p-8 md:p-12 text-center mb-12 rounded-lg" data-testid="contact-cta-card">
-            <h3 className="font-serif text-2xl md:text-3xl text-white font-medium mb-4">
-              Agenda tu Asesoría
-            </h3>
-            <p className="text-white/80 mb-6 max-w-xl mx-auto">
-              Nuestro equipo de expertos está listo para ayudarte con tus necesidades fiscales, contables y legales.
-            </p>
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-white text-blue-700 px-8 py-3 font-semibold hover:bg-blue-50 transition-colors rounded"
-              data-testid="contact-whatsapp-main"
-            >
-              <MessageCircle size={20} />
-              Agendar Ahora por WhatsApp
-            </a>
+          {/* Main CTA Cards */}
+          <div className="grid md:grid-cols-2 gap-6 mb-12">
+            {/* Chat Direct */}
+            <div className="bg-blue-gradient p-8 text-center rounded-lg" data-testid="contact-chat-card">
+              <MessageCircle size={48} className="text-white/80 mx-auto mb-4" />
+              <h3 className="font-serif text-2xl text-white font-medium mb-4">
+                Contáctate con Nosotros
+              </h3>
+              <p className="text-white/80 mb-6">
+                Chat directo por WhatsApp para resolver tus dudas
+              </p>
+              <a
+                href={`https://wa.me/${WHATSAPP_MAIN}?text=${encodeURIComponent("Hola, me gustaría obtener información sobre sus servicios.")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-white text-blue-700 px-8 py-3 font-semibold hover:bg-blue-50 transition-colors rounded"
+                data-testid="contact-whatsapp-main"
+              >
+                <MessageCircle size={20} />
+                Iniciar Chat
+              </a>
+            </div>
+
+            {/* Schedule Appointment */}
+            <div className="bg-slate-800 p-8 text-center rounded-lg" data-testid="contact-schedule-card">
+              <Calendar size={48} className="text-blue-400 mx-auto mb-4" />
+              <h3 className="font-serif text-2xl text-white font-medium mb-4">
+                Hablar con un Asesor
+              </h3>
+              <p className="text-slate-300 mb-6">
+                Agenda una cita con nuestro equipo de expertos
+              </p>
+              <a
+                href={`https://wa.me/${WHATSAPP_MAIN}?text=${encodeURIComponent("Hola, me gustaría agendar una cita con un asesor.")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-3 font-semibold hover:bg-blue-700 transition-colors rounded"
+                data-testid="contact-schedule-btn"
+              >
+                <Calendar size={20} />
+                Agendar Asesoría
+              </a>
+            </div>
           </div>
 
           {/* Offices Grid */}
+          <h3 className="font-serif text-2xl text-slate-800 mb-6 text-center">Nuestras Oficinas</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {OFFICES.map((office, idx) => (
               <motion.div
@@ -848,31 +1163,43 @@ const ContactSection = () => {
                 className="office-card"
                 data-testid={`office-card-${idx}`}
               >
-                <h3 className="font-serif text-xl text-slate-800 mb-4">{office.name}</h3>
-                <div className="space-y-3">
+                <h4 className="font-serif text-xl text-slate-800 mb-4">{office.name}</h4>
+                <div className="space-y-3 mb-4">
                   <a 
                     href={office.maps}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-start gap-3 hover:text-blue-600 transition-colors"
+                    className="flex items-start gap-3 hover:text-blue-600 transition-colors group"
                   >
                     <MapPin size={18} className="text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-slate-600 text-sm">{office.address}</span>
+                    <span className="text-slate-600 text-sm group-hover:text-blue-600">{office.address}</span>
+                    <ExternalLink size={14} className="text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </a>
-                  <div className="flex items-center gap-3">
-                    <Phone size={18} className="text-blue-600" />
-                    <span className="text-slate-600 text-sm">{office.phone}</span>
-                  </div>
+                  {office.phones.map((phone, phoneIdx) => (
+                    <div key={phoneIdx} className="flex items-center gap-3">
+                      <Phone size={18} className="text-blue-600" />
+                      <span className="text-slate-600 text-sm">{phone}</span>
+                    </div>
+                  ))}
                 </div>
                 <a
-                  href={`https://wa.me/${office.whatsapp}?text=${WHATSAPP_MESSAGE}`}
+                  href={`https://wa.me/${office.whatsapp}?text=${encodeURIComponent("Hola, me comunico desde su sitio web.")}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-blue-outline w-full mt-6 flex items-center justify-center gap-2 text-sm"
+                  className="btn-blue-outline w-full flex items-center justify-center gap-2 text-sm"
                   data-testid={`office-whatsapp-${idx}`}
                 >
                   <MessageCircle size={16} />
                   WhatsApp
+                </a>
+                <a
+                  href={office.maps}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 w-full flex items-center justify-center gap-2 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                >
+                  <MapPin size={16} />
+                  Ver en Google Maps
                 </a>
               </motion.div>
             ))}
@@ -892,9 +1219,26 @@ const ContactSection = () => {
   );
 };
 
+// Terms Modal Component
+const TermsModal = ({ isOpen, onClose, title, children }) => (
+  <Dialog open={isOpen} onOpenChange={onClose}>
+    <DialogContent className="bg-white max-w-3xl max-h-[80vh] overflow-y-auto">
+      <DialogHeader>
+        <DialogTitle className="font-serif text-2xl text-slate-800">{title}</DialogTitle>
+      </DialogHeader>
+      <div className="mt-4 text-slate-600 text-sm leading-relaxed space-y-4">
+        {children}
+      </div>
+    </DialogContent>
+  </Dialog>
+);
+
 // Footer Component
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [termsOpen, setTermsOpen] = useState(false);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
+  const [disclaimerOpen, setDisclaimerOpen] = useState(false);
 
   return (
     <footer className="section-dark py-16" data-testid="footer">
@@ -951,18 +1295,19 @@ const Footer = () => {
             <h4 className="font-serif text-lg text-white mb-4">Contacto</h4>
             <ul className="space-y-3">
               {OFFICES.map((office, idx) => (
-                <li key={idx} className="flex items-center gap-2 text-blue-100/70 text-sm">
-                  <Phone size={14} className="text-blue-400" />
-                  {office.phone}
+                <li key={idx}>
+                  <p className="text-blue-300 text-xs mb-1">{office.name}</p>
+                  {office.phones.map((phone, pIdx) => (
+                    <div key={pIdx} className="flex items-center gap-2 text-blue-100/70 text-sm">
+                      <Phone size={12} className="text-blue-400" />
+                      {phone}
+                    </div>
+                  ))}
                 </li>
               ))}
               <li className="flex items-center gap-2 text-blue-100/70 text-sm">
                 <Mail size={14} className="text-blue-400" />
                 contacto@refmex.com
-              </li>
-              <li className="flex items-center gap-2 text-blue-100/70 text-sm">
-                <MapPin size={14} className="text-blue-400" />
-                3 Oficinas en México
               </li>
             </ul>
           </div>
@@ -975,9 +1320,15 @@ const Footer = () => {
               © {currentYear} REFMEX. Todos los derechos reservados.
             </p>
             <div className="flex gap-6">
-              <a href="#" className="footer-link text-xs hover:text-blue-400">Términos de Uso</a>
-              <a href="#" className="footer-link text-xs hover:text-blue-400">Declaración de Privacidad</a>
-              <a href="#" className="footer-link text-xs hover:text-blue-400">Descargo de Responsabilidad</a>
+              <button onClick={() => setTermsOpen(true)} className="footer-link text-xs hover:text-blue-400">
+                Términos de Uso
+              </button>
+              <button onClick={() => setPrivacyOpen(true)} className="footer-link text-xs hover:text-blue-400">
+                Declaración de Privacidad
+              </button>
+              <button onClick={() => setDisclaimerOpen(true)} className="footer-link text-xs hover:text-blue-400">
+                Descargo de Responsabilidad
+              </button>
             </div>
           </div>
           <p className="text-blue-100/40 text-xs mt-4 text-center md:text-left">
@@ -985,6 +1336,38 @@ const Footer = () => {
           </p>
         </div>
       </div>
+
+      {/* Terms Modal */}
+      <TermsModal isOpen={termsOpen} onClose={() => setTermsOpen(false)} title="Términos de Uso">
+        <p>Estos Términos de Uso establecen las condiciones legales que rigen el acceso y uso del sitio web de REFMEX. Al acceder, navegar o utilizar este sitio web, usted acepta cumplir con los presentes términos y condiciones.</p>
+        
+        <h4 className="font-semibold text-slate-800 mt-4">Acerca de este sitio web</h4>
+        <p>Este sitio web es propiedad y está operado por REFMEX, empresa dedicada a la prestación de servicios profesionales en materia contable, fiscal, consultoría y servicios relacionados.</p>
+        
+        <h4 className="font-semibold text-slate-800 mt-4">Uso del contenido</h4>
+        <p>El contenido disponible en este sitio web se proporciona únicamente con fines informativos y no constituye asesoría profesional, legal, fiscal o financiera específica. Antes de tomar decisiones que puedan afectar sus finanzas o su negocio, se recomienda consultar directamente con un profesional calificado.</p>
+        
+        <h4 className="font-semibold text-slate-800 mt-4">Restricciones</h4>
+        <p>El usuario no está autorizado a copiar o utilizar software, tecnología o procesos incluidos en este sitio web sin autorización, utilizar el contenido del sitio con fines comerciales sin el consentimiento previo de REFMEX, o realizar acciones que puedan afectar la seguridad, funcionamiento o integridad del sitio web.</p>
+        
+        <h4 className="font-semibold text-slate-800 mt-4">Derechos de Propiedad Intelectual</h4>
+        <p>Todo el contenido de este sitio web, incluyendo textos, imágenes, logotipos, diseño, gráficos y materiales, es propiedad de REFMEX o de sus respectivos licenciantes y está protegido por derechos de autor, marcas registradas y otras leyes de propiedad intelectual.</p>
+      </TermsModal>
+
+      {/* Privacy Modal */}
+      <TermsModal isOpen={privacyOpen} onClose={() => setPrivacyOpen(false)} title="Declaración de Privacidad">
+        <p>El uso de este sitio web está sujeto a nuestra Política de Privacidad, en la cual se describe cómo recopilamos, utilizamos y protegemos la información personal de los usuarios.</p>
+        <p>REFMEX se compromete a proteger la privacidad de sus usuarios y a manejar la información personal de manera responsable y conforme a la legislación aplicable.</p>
+      </TermsModal>
+
+      {/* Disclaimer Modal */}
+      <TermsModal isOpen={disclaimerOpen} onClose={() => setDisclaimerOpen(false)} title="Descargo de Responsabilidad">
+        <p>Este sitio web se proporciona "tal cual", sin garantías de ningún tipo, ya sean expresas o implícitas.</p>
+        <p>REFMEX no garantiza que la información publicada esté libre de errores o que el sitio web funcione sin interrupciones. El uso de este sitio web es bajo la responsabilidad exclusiva del usuario.</p>
+        
+        <h4 className="font-semibold text-slate-800 mt-4">Limitación de responsabilidad</h4>
+        <p>En la medida máxima permitida por la ley, REFMEX no será responsable por daños directos, indirectos, incidentales, consecuentes o especiales derivados del uso o la imposibilidad de uso de este sitio web.</p>
+      </TermsModal>
     </footer>
   );
 };
@@ -1024,6 +1407,8 @@ const WhatsAppButton = () => {
 
 // Main App Component
 function App() {
+  const [language, setLanguage] = useState('es');
+
   return (
     <div className="App bg-white min-h-screen">
       <Toaster 
@@ -1037,7 +1422,7 @@ function App() {
           }
         }}
       />
-      <Navbar />
+      <Navbar language={language} setLanguage={setLanguage} />
       <HeroSection />
       <AboutSection />
       <ValuesSection />
