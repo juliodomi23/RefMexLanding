@@ -1,9 +1,10 @@
-from fastapi import FastAPI, APIRouter, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, APIRouter, UploadFile, File, Form, HTTPException, Header, Depends
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
+import hmac
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
@@ -90,6 +91,16 @@ class BlogArticleUpdate(BaseModel):
     image_url: Optional[str] = None
     read_time: Optional[str] = None
 
+class AdminLogin(BaseModel):
+    password: str
+
+
+# Auth helpers
+async def verify_admin(x_admin_token: Optional[str] = Header(None)):
+    expected = os.environ.get("ADMIN_TOKEN")
+    if not expected or not x_admin_token or not hmac.compare_digest(x_admin_token, expected):
+        raise HTTPException(status_code=401, detail="No autorizado")
+
 
 # Routes
 @api_router.get("/")
@@ -162,9 +173,21 @@ async def get_job_applications():
     return applications
 
 
+# Admin auth endpoint
+@api_router.post("/admin/login")
+async def admin_login(credentials: AdminLogin):
+    admin_password = os.environ.get("ADMIN_PASSWORD")
+    admin_token = os.environ.get("ADMIN_TOKEN")
+    if not admin_password or not admin_token:
+        raise HTTPException(status_code=500, detail="Admin no configurado")
+    if not hmac.compare_digest(credentials.password, admin_password):
+        raise HTTPException(status_code=401, detail="Credenciales incorrectas")
+    return {"token": admin_token}
+
+
 # Blog Routes
 @api_router.post("/blog", response_model=BlogArticle)
-async def create_blog_article(article: BlogArticleCreate):
+async def create_blog_article(article: BlogArticleCreate, _=Depends(verify_admin)):
     article_obj = BlogArticle(**article.model_dump())
     doc = article_obj.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
@@ -197,7 +220,7 @@ async def get_blog_article(article_id: str):
     return article
 
 @api_router.put("/blog/{article_id}", response_model=BlogArticle)
-async def update_blog_article(article_id: str, article_update: BlogArticleUpdate):
+async def update_blog_article(article_id: str, article_update: BlogArticleUpdate, _=Depends(verify_admin)):
     update_data = {k: v for k, v in article_update.model_dump().items() if v is not None}
     if not update_data:
         raise HTTPException(status_code=400, detail="No hay datos para actualizar")
@@ -215,20 +238,26 @@ async def update_blog_article(article_id: str, article_update: BlogArticleUpdate
     return await get_blog_article(article_id)
 
 @api_router.delete("/blog/{article_id}")
-async def delete_blog_article(article_id: str):
+async def delete_blog_article(article_id: str, _=Depends(verify_admin)):
     result = await db.blog_articles.delete_one({"id": article_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Artículo no encontrado")
     return {"success": True, "message": "Artículo eliminado"}
 
 
-# Seed initial blog articles
+# Seed initial blog articles (solo en no-producción)
 @api_router.post("/blog/seed")
 async def seed_blog_articles():
+    if os.environ.get("ENVIRONMENT") == "production":
+        raise HTTPException(status_code=403, detail="No disponible en producción")
+    return await _seed_articles()
+
+
+async def _seed_articles():
     existing = await db.blog_articles.count_documents({})
     if existing > 0:
         return {"message": "Blog ya tiene artículos", "count": existing}
-    
+
     articles = [
         {
             "id": str(uuid.uuid4()),
@@ -304,6 +333,11 @@ async def seed_blog_articles():
 
 # Include the router in the main app
 app.include_router(api_router)
+
+
+@app.on_event("startup")
+async def startup_event():
+    await _seed_articles()
 
 app.add_middleware(
     CORSMiddleware,

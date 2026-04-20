@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
-import "@/App.css";
+import { useState, useEffect, useRef, createContext, useContext } from "react";
+import "./App.css";
 import axios from "axios";
+import TRANSLATIONS from "./translations";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Menu, X, Phone, MapPin, Mail, Facebook, 
@@ -18,6 +19,9 @@ import { Toaster, toast } from "sonner";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Calendly URL - reemplaza con tu URL de Calendly
+const CALENDLY_URL = "https://calendly.com/refmex/asesoria";
+
 // WhatsApp configuration
 const WHATSAPP_MAIN = "529612298120";
 const WHATSAPP_MESSAGE = encodeURIComponent("Hola, me gustaría agendar una asesoría con REFMEX.");
@@ -25,6 +29,13 @@ const WHATSAPP_URL = `https://wa.me/${WHATSAPP_MAIN}?text=${WHATSAPP_MESSAGE}`;
 
 // Facebook URL
 const FACEBOOK_URL = "https://www.facebook.com/RefmexRedDeEstudios";
+
+// Language context
+const LangContext = createContext('es');
+const useT = () => {
+  const lang = useContext(LangContext);
+  return TRANSLATIONS[lang] || TRANSLATIONS.es;
+};
 
 // Logo URL
 const LOGO_WHITE = "https://customer-assets.emergentagent.com/job_03260dd2-d13e-48a4-92a5-b5b5239906d3/artifacts/r07q1ila_Recurso%202%402x.png";
@@ -164,57 +175,46 @@ const REPSE_MORALES = [
   "Formato 17 o 28 de REPSE"
 ];
 
-// Values data with full descriptions
-const VALUES = [
-  { 
-    icon: Shield, 
-    title: "Integridad", 
-    desc: "Actuar con honestidad, lealtad y veracidad en nuestras relaciones profesionales. Además, no asociarse con información falsa, confusa o presentada de manera descuidada. Si se relacionan con información de ese tipo, deben tomar medidas para desvincularse de ella."
-  },
-  { 
-    icon: Eye, 
-    title: "Objetividad", 
-    desc: "Mantenemos en nuestro trabajo un juicio profesional imparcial, evitando prejuicios, conflictos de interés o influencias indebidas de terceros. Si alguna situación afecta a la objetividad, la firma no realiza el servicio profesional, para asegurar decisiones justas y confiables."
-  },
-  { 
-    icon: Award, 
-    title: "Diligencia y Competencia", 
-    desc: "Realizar nuestro trabajo con cuidado, responsabilidad y conforme a las normas profesionales. Además, de mantenernos actualizados para ofrecer servicios competentes, aplicando siempre un juicio profesional adecuado."
-  },
-  { 
-    icon: Lock, 
-    title: "Confidencialidad", 
-    desc: "Proteger la información obtenida de los usuarios. No deben revelarse información confidencial sin autorización, salvo cuando exista una obligación legal o profesional. Tampoco pueden utilizarse información para beneficio propio o de terceros."
-  },
-  { 
-    icon: Briefcase, 
-    title: "Comportamiento Profesional", 
-    desc: "Cumplir con las leyes, normas y reglamentos aplicables en el ejercicio de su profesión. Asimismo, deben evitar cualquier conducta o acción que pueda desacreditar o dañar la reputación de la profesión contable."
-  }
-];
+// Icons for values (same order as translations.values.values_list)
+const VALUE_ICONS = [Shield, Eye, Award, Lock, Briefcase];
 
 // Offices data with updated phone numbers
 const OFFICES = [
-  { 
-    name: "Sede Chiapas", 
-    address: "Calle 13a. Poniente Sur 985, Chiapas", 
+  {
+    name: "Sede Chiapas",
+    city: "Tuxtla Gutiérrez, Chiapas",
+    address: "Calle 13a. Poniente Sur 985, Chiapas",
     phones: ["961 229 8120", "961 128 9177"],
     whatsapp: "529612298120",
-    maps: "https://www.google.com/maps/search/Calle%2013a.%20Poniente%20Sur%20985/@16.74809455871582,-93.12777709960938,17z?hl=es"
+    maps: "https://www.google.com/maps/search/Calle%2013a.%20Poniente%20Sur%20985/@16.74809455871582,-93.12777709960938,17z?hl=es",
+    embedUrl: "https://maps.google.com/maps?q=16.748094,-93.127777&output=embed&z=15&hl=es",
+    image: "https://images.unsplash.com/photo-1518638150340-f706e86654de?auto=format&fit=crop&w=600&h=250&q=80",
+    lat: 16.748094,
+    lng: -93.127777
   },
-  { 
-    name: "Sede Nuevo León", 
-    address: "Pino Sur 209, Valle del Virrey, CP 67257", 
+  {
+    name: "Sede Nuevo León",
+    city: "Monterrey, Nuevo León",
+    address: "Pino Sur 209, Valle del Virrey, CP 67257",
     phones: ["813 586 5600"],
     whatsapp: "528135865600",
-    maps: "https://www.google.com/maps?q=Pino+Sur+209,+Valle+Sur,+67257+Cdad.+Benito+Ju%C3%A1rez,+N.L."
+    maps: "https://www.google.com/maps?q=Pino+Sur+209,+Valle+Sur,+67257+Cdad.+Benito+Ju%C3%A1rez,+N.L.",
+    embedUrl: "https://maps.google.com/maps?q=Pino+Sur+209+Valle+del+Virrey+Juarez+Nuevo+Leon+67257&output=embed&z=15&hl=es",
+    image: "https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?auto=format&fit=crop&w=600&h=250&q=80",
+    lat: 25.6749,
+    lng: -100.2522
   },
-  { 
-    name: "Sede Estado de México", 
-    address: "Valle de los Piracantos 48, Izcalli del Valle, Tultitlán, CP 54945", 
+  {
+    name: "Sede Estado de México",
+    city: "Tultitlán, Estado de México",
+    address: "Valle de los Piracantos 48, Izcalli del Valle, Tultitlán, CP 54945",
     phones: ["557 500 9770"],
     whatsapp: "525575009770",
-    maps: "https://www.google.com/maps/search/Valle%20de%20los%20piracantos%2048%20izcalli%20del%20valle%20tultitlan/@19.58583223,-99.18466924,17z?hl=es"
+    maps: "https://www.google.com/maps/search/Valle%20de%20los%20piracantos%2048%20izcalli%20del%20valle%20tultitlan/@19.58583223,-99.18466924,17z?hl=es",
+    embedUrl: "https://maps.google.com/maps?q=19.585832,-99.184669&output=embed&z=15&hl=es",
+    image: "https://images.unsplash.com/photo-1585464231875-d9ef1f5ad396?auto=format&fit=crop&w=600&h=250&q=80",
+    lat: 19.5858,
+    lng: -99.1847
   }
 ];
 
@@ -236,6 +236,7 @@ const LANGUAGES = [
 
 // Service Detail Modal
 const ServiceModal = ({ service, isOpen, onClose }) => {
+  const t = useT();
   const whatsappUrl = `https://wa.me/${WHATSAPP_MAIN}?text=${encodeURIComponent(service.whatsappMsg)}`;
   
   return (
@@ -255,27 +256,23 @@ const ServiceModal = ({ service, isOpen, onClose }) => {
           {service.isREPSE && (
             <div className="space-y-6">
               <div>
-                <h4 className="font-semibold text-slate-800 mb-3">Requisitos para Personas Físicas:</h4>
+                <h4 className="font-semibold text-slate-800 mb-3">{t.services.req_fisicas}</h4>
                 <ol className="list-decimal list-inside space-y-1 text-slate-600 text-sm">
                   {REPSE_FISICAS.map((req, idx) => (
                     <li key={idx}>{req}</li>
                   ))}
                 </ol>
-                <p className="text-slate-500 text-sm mt-2 italic">
-                  Datos adicionales: Dos teléfonos y correos, relación de activos de la empresa, registros y/o certificaciones, entre otros.
-                </p>
+                <p className="text-slate-500 text-sm mt-2 italic">{t.services.req_note}</p>
               </div>
-              
+
               <div>
-                <h4 className="font-semibold text-slate-800 mb-3">Requisitos para Personas Morales:</h4>
+                <h4 className="font-semibold text-slate-800 mb-3">{t.services.req_morales}</h4>
                 <ol className="list-decimal list-inside space-y-1 text-slate-600 text-sm">
                   {REPSE_MORALES.map((req, idx) => (
                     <li key={idx}>{req}</li>
                   ))}
                 </ol>
-                <p className="text-slate-500 text-sm mt-2 italic">
-                  Datos adicionales: Dos teléfonos y correos, relación de activos de la empresa, registros y/o certificaciones, entre otros.
-                </p>
+                <p className="text-slate-500 text-sm mt-2 italic">{t.services.req_note}</p>
               </div>
             </div>
           )}
@@ -288,7 +285,7 @@ const ServiceModal = ({ service, isOpen, onClose }) => {
             data-testid={`service-cta-${service.title.toLowerCase().replace(/\s/g, '-')}`}
           >
             <MessageCircle size={18} />
-            Contratar Servicio
+            {t.services.hire}
           </a>
         </div>
       </DialogContent>
@@ -298,21 +295,28 @@ const ServiceModal = ({ service, isOpen, onClose }) => {
 
 // Navbar Component
 const Navbar = ({ language, setLanguage }) => {
+  const t = useT();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => { setScrolled(window.scrollY > 50); ticking = false; });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navLinks = [
-    { href: "#nosotros", label: "Nosotros" },
-    { href: "#servicios", label: "Servicios" },
-    { href: "#bolsa-trabajo", label: "Bolsa de Trabajo" },
-    { href: "#blog", label: "Blog" },
-    { href: "#contacto", label: "Contacto" }
+    { href: "#nosotros", label: t.nav.about },
+    { href: "#servicios", label: t.nav.services },
+    { href: "#bolsa-trabajo", label: t.nav.jobs },
+    { href: "#blog", label: t.nav.blog },
+    { href: "#contacto", label: t.nav.contact }
   ];
 
   const scrollToSection = (e, href) => {
@@ -369,7 +373,7 @@ const Navbar = ({ language, setLanguage }) => {
                 className="btn-blue text-sm uppercase tracking-wider"
                 data-testid="nav-cta-button"
               >
-                Agendar Asesoría
+                {t.nav.cta}
               </a>
             </div>
 
@@ -417,7 +421,7 @@ const Navbar = ({ language, setLanguage }) => {
               rel="noopener noreferrer"
               className="btn-blue text-lg uppercase tracking-wider mt-4"
             >
-              Agendar Asesoría
+              {t.nav.cta}
             </a>
           </motion.div>
         )}
@@ -428,6 +432,7 @@ const Navbar = ({ language, setLanguage }) => {
 
 // Hero Section
 const HeroSection = () => {
+  const t = useT();
   return (
     <section id="hero" className="hero-section" data-testid="hero-section">
       <div className="hero-background" style={{ backgroundImage: `url(${IMAGES.building})` }} />
@@ -450,12 +455,12 @@ const HeroSection = () => {
           />
           
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-medium text-center mb-6 leading-tight text-white" data-testid="hero-title">
-            Más que un proveedor de servicios;{" "}
-            <span className="text-blue-300">tu aliado estratégico para el crecimiento</span>
+            {t.hero.title}{" "}
+            <span className="text-blue-300">{t.hero.highlight}</span>
           </h1>
-          
+
           <p className="text-blue-100/80 text-base sm:text-lg lg:text-xl text-center max-w-3xl mb-10" data-testid="hero-subtitle">
-            Ayudamos a personas y empresas a tomar mejores decisiones financieras con integridad y profesionalismo.
+            {t.hero.subtitle}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-16">
@@ -465,7 +470,7 @@ const HeroSection = () => {
               className="btn-white flex items-center justify-center gap-2"
               data-testid="hero-services-btn"
             >
-              Nuestros Servicios
+              {t.hero.btn_services}
               <ChevronRight size={18} />
             </a>
             <a
@@ -475,7 +480,7 @@ const HeroSection = () => {
               className="btn-white-outline flex items-center justify-center gap-2"
               data-testid="hero-contact-btn"
             >
-              Contactar a un Asesor
+              {t.hero.btn_contact}
               <MessageCircle size={18} />
             </a>
           </div>
@@ -484,17 +489,17 @@ const HeroSection = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-0" data-testid="hero-stats">
             <div className="text-center px-8">
               <div className="text-blue-300 text-4xl sm:text-5xl font-serif font-medium">30+</div>
-              <div className="text-blue-100/70 text-sm uppercase tracking-wider mt-1">Años de Experiencia</div>
+              <div className="text-blue-100/70 text-sm uppercase tracking-wider mt-1">{t.hero.stat_years}</div>
             </div>
             <div className="stat-divider hidden sm:block" />
             <div className="text-center px-8">
               <div className="text-blue-300 text-4xl sm:text-5xl font-serif font-medium">3</div>
-              <div className="text-blue-100/70 text-sm uppercase tracking-wider mt-1">Oficinas en México</div>
+              <div className="text-blue-100/70 text-sm uppercase tracking-wider mt-1">{t.hero.stat_offices}</div>
             </div>
             <div className="stat-divider hidden sm:block" />
             <div className="text-center px-8">
               <div className="text-blue-300 text-4xl sm:text-5xl font-serif font-medium">13+</div>
-              <div className="text-blue-100/70 text-sm uppercase tracking-wider mt-1">Servicios Especializados</div>
+              <div className="text-blue-100/70 text-sm uppercase tracking-wider mt-1">{t.hero.stat_services}</div>
             </div>
           </div>
         </motion.div>
@@ -505,8 +510,9 @@ const HeroSection = () => {
 
 // About Section with updated content
 const AboutSection = () => {
+  const t = useT();
   return (
-    <section id="nosotros" className="section-light py-24 md:py-32" data-testid="about-section">
+    <section id="nosotros" className="section-light py-16 md:py-24 lg:py-32" data-testid="about-section">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -515,42 +521,31 @@ const AboutSection = () => {
           transition={{ duration: 0.6 }}
         >
           <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-[0.2em] text-blue-600 mb-4">Conócenos</p>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium text-slate-800" data-testid="about-title">
-              ¿Quiénes Somos?
+            <p className="text-xs uppercase tracking-[0.2em] text-blue-600 mb-4">{t.about.eyebrow}</p>
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-800" data-testid="about-title">
+              {t.about.title}
             </h2>
-            <p className="text-slate-500 text-lg mt-4">Red de Estudios Fiscales de México</p>
+            <p className="text-slate-500 text-lg mt-4">{t.about.subtitle}</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Text Content */}
             <div className="space-y-6">
               <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-600">
-                <p className="text-blue-800 font-medium italic">
-                  "Todo gran proyecto comienza con una idea clara: ayudar a las personas y empresas a tomar mejores decisiones financieras."
-                </p>
+                <p className="text-blue-800 font-medium italic">"{t.about.quote}"</p>
               </div>
-              
-              <p className="text-slate-600 leading-relaxed">
-                Nuestra Firma <span className="text-blue-700 font-semibold">REFMEX</span> nació por la necesidad de compartir experiencias entre fiscalistas y abogados, actualmente todos socios ante el Instituto Mexicano Contadores Públicos, que avalan la capacidad técnica para el ejercicio de la profesión.
-              </p>
-              <p className="text-slate-600 leading-relaxed">
-                Desde nuestros inicios entendimos que la contaduría no solo consiste en cumplir obligaciones fiscales, sino en brindar tranquilidad a los empresarios aplicando un criterio prudencial.
-              </p>
-              <p className="text-slate-600 leading-relaxed">
-                Nuestros socios cuentan con experiencia de hasta <span className="font-semibold">30 años</span>, cada uno en su campo como especialista.
-              </p>
-              <p className="text-slate-600 leading-relaxed">
-                Creemos firmemente que una firma contable debe ser más que un proveedor de servicios; debe ser un <span className="text-blue-700 font-semibold">aliado estratégico para el crecimiento</span> de cada negocio.
-              </p>
+              <p className="text-slate-600 leading-relaxed">{t.about.p1}</p>
+              <p className="text-slate-600 leading-relaxed">{t.about.p2}</p>
+              <p className="text-slate-600 leading-relaxed">{t.about.p3}</p>
+              <p className="text-slate-600 leading-relaxed">{t.about.p4}</p>
 
               {/* Features Grid */}
               <div className="grid grid-cols-2 gap-4 mt-8">
                 {[
-                  { icon: Clock, title: "Experiencia", desc: "Hasta 30 años de experiencia" },
-                  { icon: Users, title: "Equipo", desc: "Socios del IMCP certificados" },
-                  { icon: MapPin, title: "Presencia", desc: "3 estados de México" },
-                  { icon: Award, title: "Certificación", desc: "Capacidad técnica avalada" }
+                  { icon: Clock, title: t.about.feat_exp, desc: t.about.feat_exp_desc },
+                  { icon: Users, title: t.about.feat_team, desc: t.about.feat_team_desc },
+                  { icon: MapPin, title: t.about.feat_presence, desc: t.about.feat_presence_desc },
+                  { icon: Award, title: t.about.feat_cert, desc: t.about.feat_cert_desc }
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-start gap-3">
                     <div className="p-2 bg-blue-50 rounded-lg">
@@ -576,24 +571,18 @@ const AboutSection = () => {
                 />
               </div>
               <div className="floating-card" data-testid="about-floating-card">
-                <p className="font-serif text-lg font-medium">¿Qué Hacemos?</p>
-                <p className="text-sm mt-1 opacity-90">
-                  Nos especializamos en auditoría, aseguramiento, consultoría, asesoría fiscal y servicios relacionados.
-                </p>
+                <p className="font-serif text-lg font-medium">{t.about.card_title}</p>
+                <p className="text-sm mt-1 opacity-90">{t.about.card_desc}</p>
               </div>
             </div>
           </div>
           
           {/* What We Do Section */}
           <div className="mt-20 bg-slate-50 p-8 rounded-lg">
-            <h3 className="font-serif text-2xl text-slate-800 mb-6">Nuestro Compromiso</h3>
+            <h3 className="font-serif text-2xl text-slate-800 mb-6">{t.about.commitment_title}</h3>
             <div className="grid md:grid-cols-2 gap-6">
-              <p className="text-slate-600 leading-relaxed">
-                Nuestro propósito es generar un <span className="font-semibold">impacto significativo</span> en cada cliente y en cada proyecto en el que participamos. Creemos en el valor de la integridad, el servicio al interés público y la innovación como motores de crecimiento.
-              </p>
-              <p className="text-slate-600 leading-relaxed">
-                Colaboramos estrechamente con nuestros clientes para ayudarles a alcanzar sus objetivos, sin importar el tamaño de sus retos o aspiraciones. Nuestro enfoque se basa en acompañarlos con <span className="font-semibold">soluciones estratégicas, confianza y profesionalismo</span> para construir juntos un futuro mejor.
-              </p>
+              <p className="text-slate-600 leading-relaxed">{t.about.commitment_p1}</p>
+              <p className="text-slate-600 leading-relaxed">{t.about.commitment_p2}</p>
             </div>
           </div>
         </motion.div>
@@ -604,16 +593,10 @@ const AboutSection = () => {
 
 // Values Section with Ethics
 const ValuesSection = () => {
-  const ethicsPrinciples = [
-    { letter: "a", title: "Integridad", desc: "Ser leal, veraz y honrado en todas las relaciones profesionales y de negocios." },
-    { letter: "b", title: "Objetividad", desc: "Evitar prejuicios, conflictos de interés o influencia indebida de terceros que afecten el juicio profesional o de negocios." },
-    { letter: "c", title: "Diligencia y competencia profesionales", desc: "Mantener el conocimiento profesional y las habilidades al nivel necesario que aseguren que el cliente o la entidad para la que se trabaja reciben servicios profesionales competentes basados en los últimos avances de la práctica, la legislación y las técnicas, y actuar con diligencia y de conformidad con las normas técnicas y profesionales aplicables." },
-    { letter: "d", title: "Confidencialidad", desc: "Respetar la confidencialidad de la información obtenida como resultado de relaciones profesionales o de negocios y, por lo tanto, no revelar dicha información a terceros sin la autorización apropiada y específica, a menos que haya un derecho u obligación legal o profesional de hacerlo, ni usar la información para provecho personal o de terceros." },
-    { letter: "e", title: "Comportamiento profesional", desc: "Cumplir con las leyes y reglamentos relevantes, y evitar cualquier acción que desacredite a la profesión." }
-  ];
+  const t = useT();
 
   return (
-    <section id="valores" className="section-gray py-24 md:py-32 relative overflow-hidden" data-testid="values-section">
+    <section id="valores" className="section-gray py-16 md:py-24 lg:py-32 relative overflow-hidden" data-testid="values-section">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -622,43 +605,44 @@ const ValuesSection = () => {
           transition={{ duration: 0.6 }}
         >
           <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-[0.2em] text-blue-600 mb-4">Ética y Profesionalismo</p>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium text-slate-800" data-testid="values-title">
-              Valores que nos Distinguen
+            <p className="text-xs uppercase tracking-[0.2em] text-blue-600 mb-4">{t.values.eyebrow}</p>
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-800" data-testid="values-title">
+              {t.values.title}
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-            {VALUES.map((value, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: idx * 0.1 }}
-                className="card-refmex"
-                data-testid={`value-card-${idx}`}
-              >
-                <div className="value-icon">
-                  <value.icon size={24} className="text-blue-600" />
-                </div>
-                <h3 className="font-serif text-xl text-slate-800 mb-3">{value.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{value.desc}</p>
-              </motion.div>
-            ))}
+            {t.values.values_list.map((value, idx) => {
+              const Icon = VALUE_ICONS[idx];
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: idx * 0.1 }}
+                  className="card-refmex"
+                  data-testid={`value-card-${idx}`}
+                >
+                  <div className="value-icon">
+                    <Icon size={24} className="text-blue-600" />
+                  </div>
+                  <h3 className="font-serif text-xl text-slate-800 mb-3">{value.title}</h3>
+                  <p className="text-slate-500 text-sm leading-relaxed">{value.desc}</p>
+                </motion.div>
+              );
+            })}
           </div>
 
           {/* Ethics Section */}
           <div className="bg-white p-8 rounded-lg border border-blue-100">
             <h3 className="font-serif text-2xl text-slate-800 mb-6 flex items-center gap-3">
               <Shield className="text-blue-600" size={28} />
-              Ética Profesional
+              {t.values.ethics_title}
             </h3>
-            <p className="text-slate-600 mb-6">
-              Aplicamos a cabalidad los principios fundamentales establecidos en el código de ética profesional del contador independiente:
-            </p>
+            <p className="text-slate-600 mb-6">{t.values.ethics_intro}</p>
             <div className="space-y-4">
-              {ethicsPrinciples.map((principle, idx) => (
+              {t.values.ethics_list.map((principle, idx) => (
                 <div key={idx} className="flex gap-4">
                   <span className="text-blue-600 font-semibold">{principle.letter})</span>
                   <div>
@@ -677,10 +661,11 @@ const ValuesSection = () => {
 
 // Services Section with Modal
 const ServicesSection = () => {
+  const t = useT();
   const [selectedService, setSelectedService] = useState(null);
 
   return (
-    <section id="servicios" className="section-light py-24 md:py-32 relative" data-testid="services-section">
+    <section id="servicios" className="section-light py-16 md:py-24 lg:py-32 relative" data-testid="services-section">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -689,37 +674,38 @@ const ServicesSection = () => {
           transition={{ duration: 0.6 }}
         >
           <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-[0.2em] text-blue-600 mb-4">Lo que hacemos</p>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium text-slate-800" data-testid="services-title">
-              Nuestros Servicios
+            <p className="text-xs uppercase tracking-[0.2em] text-blue-600 mb-4">{t.services.eyebrow}</p>
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-800" data-testid="services-title">
+              {t.services.title}
             </h2>
-            <p className="text-slate-500 text-lg mt-4 max-w-2xl mx-auto">
-              Servicios especializados en materia fiscal, contable y legal adaptados a tus necesidades
-            </p>
+            <p className="text-slate-500 text-lg mt-4 max-w-2xl mx-auto">{t.services.subtitle}</p>
           </div>
 
           <div className="services-grid">
-            {SERVICES.map((service, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: idx * 0.05 }}
-                className="card-refmex cursor-pointer group"
-                onClick={() => setSelectedService(service)}
-                data-testid={`service-card-${idx}`}
-              >
-                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
-                  <service.icon size={24} className="text-blue-600" />
-                </div>
-                <h3 className="font-serif text-lg text-slate-800 mb-2">{service.title}</h3>
-                <p className="text-slate-500 text-sm mb-4">{service.desc}</p>
-                <span className="text-blue-600 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
-                  Ver más <ChevronRight size={16} />
-                </span>
-              </motion.div>
-            ))}
+            {t.services.services_list.map((svc, idx) => {
+              const base = SERVICES[idx];
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: idx * 0.05 }}
+                  className="card-refmex cursor-pointer group"
+                  onClick={() => setSelectedService({ ...base, title: svc.title, desc: svc.desc })}
+                  data-testid={`service-card-${idx}`}
+                >
+                  <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
+                    <base.icon size={24} className="text-blue-600" />
+                  </div>
+                  <h3 className="font-serif text-lg text-slate-800 mb-2">{svc.title}</h3>
+                  <p className="text-slate-500 text-sm mb-4">{svc.desc}</p>
+                  <span className="text-blue-600 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                    {t.services.more} <ChevronRight size={16} />
+                  </span>
+                </motion.div>
+              );
+            })}
           </div>
 
           <div className="text-center mt-12">
@@ -730,7 +716,7 @@ const ServicesSection = () => {
               className="btn-blue inline-flex items-center gap-2"
               data-testid="services-cta-button"
             >
-              Contáctanos para una Solución Personalizada
+              {t.services.cta}
               <ArrowRight size={18} />
             </a>
           </div>
@@ -750,6 +736,7 @@ const ServicesSection = () => {
 
 // Job Application Section
 const JobSection = () => {
+  const t = useT();
   const [formData, setFormData] = useState({
     nombre: '',
     edad: '',
@@ -779,9 +766,7 @@ const JobSection = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      toast.success('¡Aplicación enviada exitosamente!', {
-        description: 'Nos pondremos en contacto contigo pronto.'
-      });
+      toast.success(t.jobs.success, { description: t.jobs.success_desc });
 
       setFormData({
         nombre: '',
@@ -792,16 +777,14 @@ const JobSection = () => {
         cv: null
       });
     } catch (error) {
-      toast.error('Error al enviar la aplicación', {
-        description: 'Por favor intenta de nuevo.'
-      });
+      toast.error(t.jobs.error, { description: t.jobs.error_desc });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <section id="bolsa-trabajo" className="section-dark py-24 md:py-32" data-testid="job-section">
+    <section id="bolsa-trabajo" className="section-dark py-16 md:py-24 lg:py-32" data-testid="job-section">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -810,25 +793,23 @@ const JobSection = () => {
           transition={{ duration: 0.6 }}
         >
           <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-[0.2em] text-blue-400 mb-4">Carreras</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-blue-400 mb-4">{t.jobs.eyebrow}</p>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium text-white" data-testid="job-title">
-              Postúlate y Trabaja en REFMEX
+              {t.jobs.title}
             </h2>
-            <p className="text-blue-100/70 text-lg mt-4">
-              Forma parte de una red de profesionales comprometidos con la excelencia
-            </p>
+            <p className="text-blue-100/70 text-lg mt-4">{t.jobs.subtitle}</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             {/* Left Content - Positions */}
             <div>
-              <h3 className="font-serif text-2xl text-white mb-6">Puestos Disponibles</h3>
+              <h3 className="font-serif text-2xl text-white mb-6">{t.jobs.positions_title}</h3>
               <div className="grid grid-cols-2 gap-4">
-                {JOB_POSITIONS.map((position, idx) => (
-                  <div 
-                    key={idx} 
+                {t.jobs.job_positions.map((position, idx) => (
+                  <div
+                    key={idx}
                     className="bg-blue-900/30 border border-blue-500/20 p-4 rounded-lg hover:border-blue-400/40 transition-colors cursor-pointer"
-                    onClick={() => setFormData({ ...formData, puesto: position })}
+                    onClick={() => setFormData(prev => ({ ...prev, puesto: position }))}
                   >
                     <Briefcase size={20} className="text-blue-400 mb-2" />
                     <p className="text-white text-sm font-medium">{position}</p>
@@ -837,14 +818,9 @@ const JobSection = () => {
               </div>
               
               <div className="mt-8">
-                <h4 className="text-white font-medium mb-4">¿Por qué trabajar con nosotros?</h4>
+                <h4 className="text-white font-medium mb-4">{t.jobs.why_title}</h4>
                 <ul className="space-y-3">
-                  {[
-                    "Ambiente de trabajo profesional y colaborativo",
-                    "Oportunidades de crecimiento y desarrollo",
-                    "Capacitación continua y actualización",
-                    "Proyectos desafiantes con clientes diversos"
-                  ].map((item, idx) => (
+                  {t.jobs.why.map((item, idx) => (
                     <li key={idx} className="flex items-center gap-3 text-blue-100/80">
                       <ChevronRight size={16} className="text-blue-400" />
                       {item}
@@ -856,11 +832,11 @@ const JobSection = () => {
 
             {/* Form */}
             <div className="card-dark p-8 rounded-lg" data-testid="job-form-card">
-              <h3 className="font-serif text-xl text-white mb-6">Formulario de Postulación</h3>
+              <h3 className="font-serif text-xl text-white mb-6">{t.jobs.form_title}</h3>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label className="text-xs uppercase tracking-wider text-blue-300 block mb-2">
-                    Nombre Completo *
+                    {t.jobs.name} *
                   </label>
                   <input
                     type="text"
@@ -868,7 +844,7 @@ const JobSection = () => {
                     value={formData.nombre}
                     onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                     className="input-underline input-dark"
-                    placeholder="Tu nombre completo"
+                    placeholder={t.jobs.name}
                     data-testid="job-input-nombre"
                   />
                 </div>
@@ -876,7 +852,7 @@ const JobSection = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs uppercase tracking-wider text-blue-300 block mb-2">
-                      Edad *
+                      {t.jobs.age} *
                     </label>
                     <input
                       type="number"
@@ -892,17 +868,17 @@ const JobSection = () => {
                   </div>
                   <div>
                     <label className="text-xs uppercase tracking-wider text-blue-300 block mb-2">
-                      Puesto al que se Postula *
+                      {t.jobs.position} *
                     </label>
-                    <Select 
-                      value={formData.puesto} 
+                    <Select
+                      value={formData.puesto}
                       onValueChange={(value) => setFormData({ ...formData, puesto: value })}
                     >
                       <SelectTrigger className="bg-transparent border-0 border-b-2 border-blue-500/30 rounded-none text-white focus:ring-0 focus:border-blue-400 h-12" data-testid="job-select-puesto">
-                        <SelectValue placeholder="Seleccionar puesto" />
+                        <SelectValue placeholder={t.jobs.position_placeholder} />
                       </SelectTrigger>
                       <SelectContent className="bg-slate-800 border-blue-500/30">
-                        {JOB_POSITIONS.map((pos, idx) => (
+                        {t.jobs.job_positions.map((pos, idx) => (
                           <SelectItem key={idx} value={pos} className="text-white hover:bg-blue-600/20 focus:bg-blue-600/20">
                             {pos}
                           </SelectItem>
@@ -914,35 +890,35 @@ const JobSection = () => {
 
                 <div>
                   <label className="text-xs uppercase tracking-wider text-blue-300 block mb-2">
-                    Grado Académico Más Alto
+                    {t.jobs.degree}
                   </label>
                   <input
                     type="text"
                     value={formData.grado_academico}
                     onChange={(e) => setFormData({ ...formData, grado_academico: e.target.value })}
                     className="input-underline input-dark"
-                    placeholder="Ej: Licenciatura en Contaduría"
+                    placeholder={t.jobs.degree_placeholder}
                     data-testid="job-input-grado"
                   />
                 </div>
 
                 <div>
                   <label className="text-xs uppercase tracking-wider text-blue-300 block mb-2">
-                    ¿Cuánto Desea Ganar? (Mensual)
+                    {t.jobs.salary}
                   </label>
                   <input
                     type="text"
                     value={formData.salario_deseado}
                     onChange={(e) => setFormData({ ...formData, salario_deseado: e.target.value })}
                     className="input-underline input-dark"
-                    placeholder="Ej: $25,000 MXN"
+                    placeholder={t.jobs.salary_placeholder}
                     data-testid="job-input-salario"
                   />
                 </div>
 
                 <div>
                   <label className="text-xs uppercase tracking-wider text-blue-300 block mb-2">
-                    Adjunta tu CV *
+                    {t.jobs.cv} *
                   </label>
                   <input
                     type="file"
@@ -959,7 +935,7 @@ const JobSection = () => {
                   className="btn-blue w-full disabled:opacity-50 disabled:cursor-not-allowed"
                   data-testid="job-submit-button"
                 >
-                  {isSubmitting ? 'Enviando...' : 'Enviar Postulación'}
+                  {isSubmitting ? t.jobs.submitting : t.jobs.submit}
                 </button>
               </form>
             </div>
@@ -972,13 +948,13 @@ const JobSection = () => {
 
 // Blog Section
 const BlogSection = () => {
+  const t = useT();
   const [articles, setArticles] = useState([]);
   const [activeCategory, setActiveCategory] = useState('empresarios');
 
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        await axios.post(`${API}/blog/seed`);
         const response = await axios.get(`${API}/blog`);
         setArticles(response.data);
       } catch (error) {
@@ -991,13 +967,13 @@ const BlogSection = () => {
   const filteredArticles = articles.filter(a => a.category === activeCategory);
 
   const categories = [
-    { id: 'empresarios', label: 'Para Empresarios' },
-    { id: 'fiscalistas', label: 'Para Fiscalistas' },
-    { id: 'asalariados', label: 'Para Asalariados' }
+    { id: 'empresarios', label: t.blog.tabs.empresarios },
+    { id: 'fiscalistas', label: t.blog.tabs.fiscalistas },
+    { id: 'asalariados', label: t.blog.tabs.asalariados }
   ];
 
   return (
-    <section id="blog" className="section-gray py-24 md:py-32" data-testid="blog-section">
+    <section id="blog" className="section-gray py-16 md:py-24 lg:py-32" data-testid="blog-section">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -1006,13 +982,11 @@ const BlogSection = () => {
           transition={{ duration: 0.6 }}
         >
           <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-[0.2em] text-blue-600 mb-4">Recursos</p>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium text-slate-800" data-testid="blog-title">
-              Blog
+            <p className="text-xs uppercase tracking-[0.2em] text-blue-600 mb-4">{t.blog.eyebrow}</p>
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-800" data-testid="blog-title">
+              {t.blog.title}
             </h2>
-            <p className="text-slate-500 text-lg mt-4">
-              Contenido especializado para mantenerte informado
-            </p>
+            <p className="text-slate-500 text-lg mt-4">{t.blog.subtitle}</p>
           </div>
 
           <Tabs defaultValue="empresarios" className="w-full" onValueChange={setActiveCategory}>
@@ -1034,10 +1008,11 @@ const BlogSection = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredArticles.map((article, idx) => (
                     <motion.div
-                      key={article.id}
+                      key={`${article.id}-${activeCategory}`}
                       initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, delay: idx * 0.1 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: false, amount: 0.2 }}
+                      transition={{ duration: 0.3, delay: Math.min(idx * 0.05, 0.2) }}
                       className="card-refmex overflow-hidden p-0"
                       data-testid={`blog-article-${idx}`}
                     >
@@ -1072,7 +1047,7 @@ const BlogSection = () => {
               className="btn-blue inline-flex items-center gap-2"
               data-testid="blog-cta-button"
             >
-              Consulta con un Experto
+              {t.blog.cta}
               <ArrowRight size={18} />
             </a>
           </div>
@@ -1082,12 +1057,112 @@ const BlogSection = () => {
   );
 };
 
-// Contact Section with Calendar
-const ContactSection = () => {
-  const [showCalendar, setShowCalendar] = useState(false);
+// Leaflet map with REFMEX markers — lazy loaded to avoid SSR issues
+let MapContainer, TileLayer, Marker, Popup, LeafletL;
+
+const loadLeaflet = async () => {
+  if (MapContainer) return;
+  const leaflet = await import('leaflet');
+  const rl = await import('react-leaflet');
+  await import('leaflet/dist/leaflet.css');
+  LeafletL = leaflet.default;
+  MapContainer = rl.MapContainer;
+  TileLayer = rl.TileLayer;
+  Marker = rl.Marker;
+  Popup = rl.Popup;
+  delete LeafletL.Icon.Default.prototype._getIconUrl;
+  LeafletL.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  });
+};
+
+const OfficesMap = () => {
+  const [ready, setReady] = useState(false);
+  const iconRef = useRef(null);
+
+  useEffect(() => {
+    loadLeaflet().then(() => {
+      iconRef.current = LeafletL.divIcon({
+        html: `<div style="width:38px;height:38px;background:linear-gradient(135deg,#1e40af,#3b82f6);border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid white;box-shadow:0 3px 10px rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;">
+          <img src="${LOGO_WHITE}" style="transform:rotate(45deg);width:22px;height:22px;object-fit:contain;" />
+        </div>`,
+        className: '',
+        iconSize: [38, 38],
+        iconAnchor: [19, 38],
+        popupAnchor: [0, -42],
+      });
+      setReady(true);
+    });
+  }, []);
+
+  const t = useT();
+  if (!ready) return <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400">{t.contact.map_loading}</div>;
 
   return (
-    <section id="contacto" className="section-light py-24 md:py-32" data-testid="contact-section">
+    <MapContainer
+      center={[23.6345, -102.5528]}
+      zoom={5}
+      style={{ height: '100%', width: '100%', minHeight: 480 }}
+      scrollWheelZoom={false}
+      zoomControl={true}
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+      />
+      {OFFICES.map((office, idx) => (
+        <Marker key={idx} position={[office.lat, office.lng]} icon={iconRef.current}>
+          <Popup>
+            <div style={{ fontFamily: 'Georgia, serif', minWidth: 190, padding: '4px 2px' }}>
+              <p style={{ fontWeight: 700, color: '#1e40af', marginBottom: 4, fontSize: 14 }}>{office.city}</p>
+              <p style={{ color: '#64748b', fontSize: 12, marginBottom: 4, lineHeight: 1.4 }}>{office.address}</p>
+              {office.phones.map((p, pi) => (
+                <p key={pi} style={{ color: '#475569', fontSize: 12, margin: '2px 0' }}>📞 {p}</p>
+              ))}
+              <a href={office.maps} target="_blank" rel="noreferrer"
+                style={{ color: '#1e40af', fontSize: 12, display: 'block', marginTop: 6 }}>
+                Ver en Google Maps →
+              </a>
+            </div>
+          </Popup>
+        </Marker>
+      ))}
+    </MapContainer>
+  );
+};
+
+// Calendly Inline Widget
+const CalendlyWidget = () => {
+  useEffect(() => {
+    if (window.Calendly) {
+      window.Calendly.initInlineWidget({
+        url: CALENDLY_URL,
+        parentElement: document.getElementById('calendly-inline'),
+        prefill: {},
+        utm: {}
+      });
+    }
+  }, []);
+
+  return (
+    <div
+      id="calendly-inline"
+      className="calendly-inline-widget w-full"
+      data-url={CALENDLY_URL}
+      style={{ minWidth: '280px', height: '660px' }}
+    />
+  );
+};
+
+// Contact Section with Calendly + Redesigned Offices
+const ContactSection = () => {
+  const t = useT();
+  const [showCalendly, setShowCalendly] = useState(false);
+
+  return (
+    <section id="contacto" className="section-light py-16 md:py-24 lg:py-32" data-testid="contact-section">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -1096,122 +1171,148 @@ const ContactSection = () => {
           transition={{ duration: 0.6 }}
         >
           <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-[0.2em] text-blue-600 mb-4">Contáctanos</p>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium text-slate-800" data-testid="contact-title">
-              Estamos Para Atenderte
+            <p className="text-xs uppercase tracking-[0.2em] text-blue-600 mb-4">{t.contact.eyebrow}</p>
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-800" data-testid="contact-title">
+              {t.contact.title}
             </h2>
-            <p className="text-slate-500 text-lg mt-4">
-              Visítanos en cualquiera de nuestras oficinas o agenda una cita
-            </p>
+            <p className="text-slate-500 text-lg mt-4">{t.contact.subtitle}</p>
           </div>
 
-          {/* Main CTA Cards */}
-          <div className="grid md:grid-cols-2 gap-6 mb-12">
-            {/* Chat Direct */}
-            <div className="bg-blue-gradient p-8 text-center rounded-lg" data-testid="contact-chat-card">
-              <MessageCircle size={48} className="text-white/80 mx-auto mb-4" />
-              <h3 className="font-serif text-2xl text-white font-medium mb-4">
-                Contáctate con Nosotros
-              </h3>
-              <p className="text-white/80 mb-6">
-                Chat directo por WhatsApp para resolver tus dudas
-              </p>
-              <a
-                href={`https://wa.me/${WHATSAPP_MAIN}?text=${encodeURIComponent("Hola, me gustaría obtener información sobre sus servicios.")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-white text-blue-700 px-8 py-3 font-semibold hover:bg-blue-50 transition-colors rounded"
-                data-testid="contact-whatsapp-main"
-              >
-                <MessageCircle size={20} />
-                Iniciar Chat
-              </a>
+          {/* Hablar con un Asesor — tarjeta única */}
+          <div className="bg-slate-800 p-8 rounded-xl flex flex-col sm:flex-row items-center gap-6 mb-12" data-testid="contact-schedule-card">
+            <div className="flex-shrink-0">
+              <div className="w-16 h-16 rounded-full bg-blue-600/20 flex items-center justify-center">
+                <Calendar size={32} className="text-blue-400" />
+              </div>
             </div>
-
-            {/* Schedule Appointment */}
-            <div className="bg-slate-800 p-8 text-center rounded-lg" data-testid="contact-schedule-card">
-              <Calendar size={48} className="text-blue-400 mx-auto mb-4" />
-              <h3 className="font-serif text-2xl text-white font-medium mb-4">
-                Hablar con un Asesor
+            <div className="flex-1 text-center sm:text-left">
+              <h3 className="font-serif text-2xl text-white font-semibold mb-1">
+                {t.contact.advisor_title}
               </h3>
-              <p className="text-slate-300 mb-6">
-                Agenda una cita con nuestro equipo de expertos
-              </p>
-              <a
-                href={`https://wa.me/${WHATSAPP_MAIN}?text=${encodeURIComponent("Hola, me gustaría agendar una cita con un asesor.")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-3 font-semibold hover:bg-blue-700 transition-colors rounded"
-                data-testid="contact-schedule-btn"
-              >
-                <Calendar size={20} />
-                Agendar Asesoría
-              </a>
+              <p className="text-slate-400 text-sm">{t.contact.advisor_desc}</p>
             </div>
+            <button
+              onClick={() => setShowCalendly(true)}
+              className="flex-shrink-0 inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-3 font-semibold hover:bg-blue-700 transition-colors rounded-lg"
+              data-testid="contact-schedule-btn"
+            >
+              <Calendar size={20} />
+              {t.contact.advisor_btn}
+            </button>
           </div>
 
-          {/* Offices Grid */}
-          <h3 className="font-serif text-2xl text-slate-800 mb-6 text-center">Nuestras Oficinas</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {OFFICES.map((office, idx) => (
+          {/* Calendly Modal */}
+          <AnimatePresence>
+            {showCalendly && (
               <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: idx * 0.1 }}
-                className="office-card"
-                data-testid={`office-card-${idx}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4"
+                onClick={(e) => e.target === e.currentTarget && setShowCalendly(false)}
               >
-                <h4 className="font-serif text-xl text-slate-800 mb-4">{office.name}</h4>
-                <div className="space-y-3 mb-4">
-                  <a 
-                    href={office.maps}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-start gap-3 hover:text-blue-600 transition-colors group"
-                  >
-                    <MapPin size={18} className="text-blue-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-slate-600 text-sm group-hover:text-blue-600">{office.address}</span>
-                    <ExternalLink size={14} className="text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </a>
-                  {office.phones.map((phone, phoneIdx) => (
-                    <div key={phoneIdx} className="flex items-center gap-3">
-                      <Phone size={18} className="text-blue-600" />
-                      <span className="text-slate-600 text-sm">{phone}</span>
-                    </div>
-                  ))}
-                </div>
-                <a
-                  href={`https://wa.me/${office.whatsapp}?text=${encodeURIComponent("Hola, me comunico desde su sitio web.")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-blue-outline w-full flex items-center justify-center gap-2 text-sm"
-                  data-testid={`office-whatsapp-${idx}`}
+                <motion.div
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.95, opacity: 0 }}
+                  className="bg-white rounded-xl shadow-2xl w-full max-w-3xl overflow-hidden"
                 >
-                  <MessageCircle size={16} />
-                  WhatsApp
-                </a>
-                <a
-                  href={office.maps}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-3 w-full flex items-center justify-center gap-2 text-sm text-blue-600 hover:text-blue-800 transition-colors"
-                >
-                  <MapPin size={16} />
-                  Ver en Google Maps
-                </a>
+                  <div className="flex items-center justify-between p-4 border-b border-slate-200">
+                    <h3 className="font-serif text-xl text-slate-800">{t.contact.calendly_title}</h3>
+                    <button
+                      onClick={() => setShowCalendly(false)}
+                      className="text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                      <X size={24} />
+                    </button>
+                  </div>
+                  <div className="p-0">
+                    <CalendlyWidget />
+                  </div>
+                  <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                    <p className="text-slate-500 text-sm">{t.contact.calendly_instant}</p>
+                    <a
+                      href={`https://wa.me/${WHATSAPP_MAIN}?text=${encodeURIComponent("Hola, quisiera hablar con un asesor.")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-green-600 text-white px-5 py-2 rounded text-sm font-semibold hover:bg-green-700 transition-colors"
+                    >
+                      <MessageCircle size={16} />
+                      {t.contact.calendly_wa}
+                    </a>
+                  </div>
+                </motion.div>
               </motion.div>
-            ))}
-          </div>
+            )}
+          </AnimatePresence>
 
-          {/* Building Image */}
-          <div className="mt-12 overflow-hidden rounded-lg">
-            <img 
-              src={IMAGES.building} 
-              alt="Edificio Corporativo" 
-              className="w-full h-64 md:h-80 object-cover"
-            />
+          {/* Offices Section */}
+          <div className="mt-4">
+            <div className="text-center mb-8">
+              <h3 className="font-serif text-3xl font-semibold text-slate-800">{t.contact.offices_title}</h3>
+              <p className="text-slate-500 text-sm mt-2">{t.contact.offices_hint}</p>
+            </div>
+
+            <div className="flex flex-col lg:flex-row rounded-xl overflow-hidden border border-slate-200 shadow-sm" style={{ minHeight: '520px' }}>
+              {/* Left: Office Cards */}
+              <div className="lg:w-2/5 overflow-y-auto" style={{ maxHeight: '560px' }}>
+                {OFFICES.map((office, idx) => (
+                  <div
+                    key={idx}
+                    className="border-b border-slate-100"
+                    data-testid={`office-card-${idx}`}
+                  >
+                    <div className="overflow-hidden h-36">
+                      <img
+                        src={office.image}
+                        alt={office.city}
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h4 className="font-semibold text-base text-slate-800 mb-2">{office.city}</h4>
+                      <div className="flex items-start gap-2 mb-2">
+                        <MapPin size={14} className="text-blue-600 mt-0.5 flex-shrink-0" />
+                        <span className="text-slate-500 text-xs leading-snug">{office.address}</span>
+                      </div>
+                      {office.phones.map((phone, pIdx) => (
+                        <div key={pIdx} className="flex items-center gap-2 mb-1">
+                          <Phone size={13} className="text-blue-600 flex-shrink-0" />
+                          <span className="text-slate-600 text-sm">{phone}</span>
+                        </div>
+                      ))}
+                      <div className="mt-3 flex gap-2">
+                        <a
+                          href={`https://wa.me/${office.whatsapp}?text=${encodeURIComponent("Hola, me comunico desde su sitio web.")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 flex items-center justify-center gap-1 bg-blue-600 text-white text-xs py-2 px-3 rounded hover:bg-blue-700 transition-colors"
+                          data-testid={`office-whatsapp-${idx}`}
+                        >
+                          <MessageCircle size={13} />
+                          {t.contact.whatsapp}
+                        </a>
+                        <a
+                          href={office.maps}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 flex items-center justify-center gap-1 border border-blue-600 text-blue-600 text-xs py-2 px-3 rounded hover:bg-blue-50 transition-colors"
+                        >
+                          <MapPin size={13} />
+                          {t.contact.see_map}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Right: Leaflet Map — México completo con marcadores REFMEX */}
+              <div className="lg:w-3/5 min-h-96 lg:min-h-0" style={{ isolation: 'isolate' }}>
+                <OfficesMap />
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -1234,7 +1335,8 @@ const TermsModal = ({ isOpen, onClose, title, children }) => (
 );
 
 // Footer Component
-const Footer = () => {
+const Footer = ({ onAdminClick }) => {
+  const t = useT();
   const currentYear = new Date().getFullYear();
   const [termsOpen, setTermsOpen] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
@@ -1247,9 +1349,7 @@ const Footer = () => {
           {/* Brand Column */}
           <div>
             <img src={LOGO_WHITE} alt="REFMEX" className="h-12 mb-4" />
-            <p className="text-blue-100/70 text-sm mb-4">
-              Red de Estudios Fiscales de México. Tu aliado estratégico para el crecimiento empresarial.
-            </p>
+            <p className="text-blue-100/70 text-sm mb-4">{t.footer.tagline}</p>
             <a
               href={FACEBOOK_URL}
               target="_blank"
@@ -1258,18 +1358,18 @@ const Footer = () => {
               data-testid="footer-facebook"
             >
               <Facebook size={20} />
-              <span className="text-sm">Síguenos en Facebook</span>
+              <span className="text-sm">{t.footer.follow}</span>
             </a>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-serif text-lg text-white mb-4">Enlaces Rápidos</h4>
+            <h4 className="font-serif text-lg text-white mb-4">{t.footer.links_title}</h4>
             <ul className="space-y-2">
-              {['Nosotros', 'Servicios', 'Bolsa de Trabajo', 'Blog', 'Contacto'].map((link, idx) => (
+              {t.footer.links.map((link, idx) => (
                 <li key={idx}>
-                  <a href={`#${link.toLowerCase().replace(/\s/g, '-')}`} className="footer-link text-sm hover:text-blue-400">
-                    {link}
+                  <a href={link.href} className="footer-link text-sm hover:text-blue-400">
+                    {link.label}
                   </a>
                 </li>
               ))}
@@ -1278,7 +1378,7 @@ const Footer = () => {
 
           {/* Services */}
           <div>
-            <h4 className="font-serif text-lg text-white mb-4">Servicios Destacados</h4>
+            <h4 className="font-serif text-lg text-white mb-4">{t.footer.services_title}</h4>
             <ul className="space-y-2">
               {['Auditoría', 'Contabilidad', 'Impuestos', 'Registro REPSE', 'Compliance'].map((service, idx) => (
                 <li key={idx}>
@@ -1292,16 +1392,17 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h4 className="font-serif text-lg text-white mb-4">Contacto</h4>
+            <h4 className="font-serif text-lg text-white mb-4">{t.footer.contact_title}</h4>
             <ul className="space-y-3">
               {OFFICES.map((office, idx) => (
                 <li key={idx}>
                   <p className="text-blue-300 text-xs mb-1">{office.name}</p>
                   {office.phones.map((phone, pIdx) => (
-                    <div key={pIdx} className="flex items-center gap-2 text-blue-100/70 text-sm">
+                    <a key={pIdx} href={`https://wa.me/${office.whatsapp}`} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-blue-100/70 text-sm hover:text-blue-300 transition-colors">
                       <Phone size={12} className="text-blue-400" />
                       {phone}
-                    </div>
+                    </a>
                   ))}
                 </li>
               ))}
@@ -1321,19 +1422,22 @@ const Footer = () => {
             </p>
             <div className="flex gap-6">
               <button onClick={() => setTermsOpen(true)} className="footer-link text-xs hover:text-blue-400">
-                Términos de Uso
+                {t.footer.terms}
               </button>
               <button onClick={() => setPrivacyOpen(true)} className="footer-link text-xs hover:text-blue-400">
-                Declaración de Privacidad
+                {t.footer.privacy}
               </button>
               <button onClick={() => setDisclaimerOpen(true)} className="footer-link text-xs hover:text-blue-400">
-                Descargo de Responsabilidad
+                {t.footer.disclaimer}
               </button>
             </div>
           </div>
-          <p className="text-blue-100/40 text-xs mt-4 text-center md:text-left">
-            El uso del contenido de este sitio es exclusivamente informativo y no constituye asesoría profesional. Consulte a un especialista para su caso particular.
-          </p>
+          <p className="text-blue-100/40 text-xs mt-4 text-center md:text-left">{t.footer.legal}</p>
+          <div className="text-right mt-2">
+            <button onClick={onAdminClick} className="text-blue-100/20 hover:text-blue-100/50 text-xs transition-colors">
+              {t.footer.admin}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1377,8 +1481,14 @@ const WhatsAppButton = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsVisible(window.scrollY > 300);
-    window.addEventListener('scroll', handleScroll);
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => { setIsVisible(window.scrollY > 300); ticking = false; });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -1405,34 +1515,269 @@ const WhatsAppButton = () => {
   );
 };
 
+// Blog Admin Component
+const BLANK_ARTICLE = { title: '', excerpt: '', content: '', category: 'empresarios', image_url: '', read_time: '5 min' };
+
+const getAdminHeaders = () => ({
+  headers: { 'X-Admin-Token': sessionStorage.getItem('admin_token') || '' }
+});
+
+const BlogAdmin = ({ onClose }) => {
+  const [authenticated, setAuthenticated] = useState(!!sessionStorage.getItem('admin_token'));
+  const [password, setPassword] = useState('');
+  const [articles, setArticles] = useState([]);
+  const [editing, setEditing] = useState(null);
+  const [creating, setCreating] = useState(false);
+  const [form, setForm] = useState(BLANK_ARTICLE);
+  const [loading, setLoading] = useState(false);
+
+  const loadArticles = async () => {
+    try {
+      const res = await axios.get(`${API}/blog`);
+      setArticles(res.data);
+    } catch {
+      toast.error('Error al cargar artículos');
+    }
+  };
+
+  useEffect(() => { if (authenticated) loadArticles(); }, [authenticated]);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(`${API}/admin/login`, { password });
+      sessionStorage.setItem('admin_token', res.data.token);
+      setAuthenticated(true);
+    } catch {
+      toast.error('Contraseña incorrecta');
+    }
+  };
+
+  const startEdit = (article) => {
+    setEditing(article);
+    setForm({ title: article.title, excerpt: article.excerpt, content: article.content, category: article.category, image_url: article.image_url || '', read_time: article.read_time });
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      if (editing) {
+        await axios.put(`${API}/blog/${editing.id}`, form, getAdminHeaders());
+        toast.success('Artículo actualizado');
+        setEditing(null);
+      } else {
+        await axios.post(`${API}/blog`, form, getAdminHeaders());
+        toast.success('Artículo creado');
+        setCreating(false);
+      }
+      setForm(BLANK_ARTICLE);
+      loadArticles();
+    } catch {
+      toast.error('Error al guardar');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id, title) => {
+    if (!window.confirm(`¿Eliminar "${title}"?`)) return;
+    try {
+      await axios.delete(`${API}/blog/${id}`, getAdminHeaders());
+      toast.success('Artículo eliminado');
+      loadArticles();
+    } catch {
+      toast.error('Error al eliminar');
+    }
+  };
+
+  const CATEGORIES = [
+    { value: 'empresarios', label: 'Para Empresarios' },
+    { value: 'fiscalistas', label: 'Para Fiscalistas' },
+    { value: 'asalariados', label: 'Para Asalariados' }
+  ];
+
+  return (
+    <div className="fixed inset-0 bg-black/70 z-50 flex items-start justify-center overflow-y-auto p-4 pt-8">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl mb-8">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-slate-200 bg-slate-800 rounded-t-xl">
+          <h2 className="font-serif text-xl text-white">Administración del Blog</h2>
+          <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+            <X size={24} />
+          </button>
+        </div>
+
+        <div className="p-6">
+          {/* Login Form */}
+          {!authenticated ? (
+            <form onSubmit={handleLogin} className="max-w-sm mx-auto py-8">
+              <p className="text-slate-600 text-center mb-6">Ingresa la contraseña de administrador</p>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Contraseña"
+                className="w-full border border-slate-300 rounded px-4 py-3 mb-4 focus:outline-none focus:border-blue-500"
+                autoFocus
+              />
+              <button type="submit" className="btn-blue w-full">
+                Ingresar
+              </button>
+            </form>
+          ) : (editing || creating) ? (
+            /* Article Form */
+            <form onSubmit={handleSave} className="space-y-4">
+              <div className="flex items-center gap-3 mb-2">
+                <button type="button" onClick={() => { setEditing(null); setCreating(false); setForm(BLANK_ARTICLE); }} className="text-blue-600 hover:underline text-sm">
+                  ← Volver a la lista
+                </button>
+                <h3 className="font-semibold text-slate-800">{editing ? 'Editar Artículo' : 'Nuevo Artículo'}</h3>
+              </div>
+
+              <div>
+                <label className="text-xs uppercase tracking-wider text-slate-500 block mb-1">Título *</label>
+                <input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  className="w-full border border-slate-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500" />
+              </div>
+
+              <div>
+                <label className="text-xs uppercase tracking-wider text-slate-500 block mb-1">Resumen *</label>
+                <textarea required rows={2} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
+                  className="w-full border border-slate-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500" />
+              </div>
+
+              <div>
+                <label className="text-xs uppercase tracking-wider text-slate-500 block mb-1">Contenido *</label>
+                <textarea required rows={5} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })}
+                  className="w-full border border-slate-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs uppercase tracking-wider text-slate-500 block mb-1">Categoría</label>
+                  <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
+                    className="w-full border border-slate-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500">
+                    {CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs uppercase tracking-wider text-slate-500 block mb-1">Tiempo de lectura</label>
+                  <input value={form.read_time} onChange={(e) => setForm({ ...form, read_time: e.target.value })}
+                    placeholder="ej: 5 min"
+                    className="w-full border border-slate-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500" />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs uppercase tracking-wider text-slate-500 block mb-1">URL de imagen</label>
+                <input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })}
+                  placeholder="https://..."
+                  className="w-full border border-slate-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500" />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={loading} className="btn-blue flex-1 disabled:opacity-50">
+                  {loading ? 'Guardando...' : editing ? 'Actualizar' : 'Crear Artículo'}
+                </button>
+                <button type="button" onClick={() => { setEditing(null); setCreating(false); setForm(BLANK_ARTICLE); }}
+                  className="flex-1 border border-slate-300 text-slate-700 py-2 rounded hover:bg-slate-50 transition-colors">
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          ) : (
+            /* Articles List */
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="font-semibold text-slate-800">{articles.length} artículos publicados</h3>
+                <button onClick={() => { setCreating(true); setForm(BLANK_ARTICLE); }} className="btn-blue text-sm">
+                  + Nuevo Artículo
+                </button>
+              </div>
+              <div className="space-y-3">
+                {articles.map((article) => (
+                  <div key={article.id} className="flex items-start gap-4 p-4 border border-slate-200 rounded-lg hover:border-blue-200 transition-colors">
+                    {article.image_url && (
+                      <img src={article.image_url} alt="" className="w-20 h-14 object-cover rounded flex-shrink-0" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-slate-800 truncate">{article.title}</p>
+                      <p className="text-slate-500 text-xs mt-0.5">
+                        {CATEGORIES.find((c) => c.value === article.category)?.label} · {article.read_time}
+                      </p>
+                      <p className="text-slate-400 text-xs mt-1 line-clamp-1">{article.excerpt}</p>
+                    </div>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <button onClick={() => startEdit(article)}
+                        className="text-xs px-3 py-1.5 border border-blue-300 text-blue-600 rounded hover:bg-blue-50 transition-colors">
+                        Editar
+                      </button>
+                      <button onClick={() => handleDelete(article.id, article.title)}
+                        className="text-xs px-3 py-1.5 border border-red-300 text-red-600 rounded hover:bg-red-50 transition-colors">
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {articles.length === 0 && (
+                  <p className="text-center text-slate-400 py-8">No hay artículos. ¡Crea el primero!</p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Main App Component
 function App() {
   const [language, setLanguage] = useState('es');
+  const [showAdmin, setShowAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdmin = () => {
+      if (window.location.hash === '#blog-admin') setShowAdmin(true);
+    };
+    checkAdmin();
+    window.addEventListener('hashchange', checkAdmin);
+    return () => window.removeEventListener('hashchange', checkAdmin);
+  }, []);
+
+  const closeAdmin = () => {
+    setShowAdmin(false);
+    history.replaceState(null, '', window.location.pathname);
+  };
 
   return (
-    <div className="App bg-white min-h-screen">
-      <Toaster 
-        theme="light" 
-        position="top-right"
-        toastOptions={{
-          style: {
-            background: '#FFFFFF',
-            border: '1px solid rgba(30, 64, 175, 0.2)',
-            color: '#0F172A'
-          }
-        }}
-      />
-      <Navbar language={language} setLanguage={setLanguage} />
-      <HeroSection />
-      <AboutSection />
-      <ValuesSection />
-      <ServicesSection />
-      <JobSection />
-      <BlogSection />
-      <ContactSection />
-      <Footer />
-      <WhatsAppButton />
-    </div>
+    <LangContext.Provider value={language}>
+      <div className="App bg-white min-h-screen">
+        <Toaster
+          theme="light"
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: '#FFFFFF',
+              border: '1px solid rgba(30, 64, 175, 0.2)',
+              color: '#0F172A'
+            }
+          }}
+        />
+        <Navbar language={language} setLanguage={setLanguage} />
+        <HeroSection />
+        <AboutSection />
+        <ValuesSection />
+        <ServicesSection />
+        <JobSection />
+        <BlogSection />
+        <ContactSection />
+        <Footer onAdminClick={() => setShowAdmin(true)} />
+        <WhatsAppButton />
+        {showAdmin && <BlogAdmin onClose={closeAdmin} />}
+      </div>
+    </LangContext.Provider>
   );
 }
 

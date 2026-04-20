@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npx react-scripts *)",
+      "Bash(node_modules/.bin/craco build *)",
+      "Bash(node -e \"require\\('./D:/AmbarRojo/RefMexLanding/frontend/src/App.js'\\)\")",
+      "Bash(node -e \"const fs=require\\('fs'\\); const code=fs.readFileSync\\('src/App.js','utf8'\\); console.log\\('Lines:', code.split\\('\\\\n'\\).length, '| OK'\\)\")",
+      "Bash(node *)",
+      "Bash(pip --version)",
+      "Bash(npm --version)",
+      "Bash(pip show *)",
+      "Bash(mongod --version)",
+      "Bash(mongo --version)",
+      "Read(//c/Program Files/**)",
+      "Read(//c/Program Files/MongoDB/**)",
+      "Bash(net start *)",
+      "Bash(sc query *)",
+      "Bash(mongosh --eval \"db.runCommand\\({ping:1}\\)\" --quiet)",
+      "Bash(python *)",
+      "Bash(npx craco *)"
+    ]
+  }
+}
