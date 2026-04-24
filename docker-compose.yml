@@ -14,10 +14,13 @@ services:
   backend:
     build: ./backend
     restart: unless-stopped
-    env_file: ./backend/.env
     environment:
       - MONGO_URL=mongodb://mongo:27017
       - ENVIRONMENT=production
+      - DB_NAME=${DB_NAME:-refmex}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - ADMIN_TOKEN=${ADMIN_TOKEN}
+      - CORS_ORIGINS=${CORS_ORIGINS:-*}
     depends_on:
       mongo:
         condition: service_healthy
