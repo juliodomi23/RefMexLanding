@@ -8,6 +8,7 @@ RUN pip install --no-cache-dir \
     uvicorn==0.25.0 \
     python-dotenv>=1.0.1 \
     motor==3.3.1 \
+    pymongo==4.8.0 \
     pydantic>=2.6.4 \
     python-multipart>=0.0.9 \
     email-validator>=2.2.0 \
