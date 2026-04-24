@@ -5,33 +5,23 @@ services:
     restart: unless-stopped
     volumes:
       - mongo_data:/data/db
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   backend:
     build: ./backend
     restart: unless-stopped
     environment:
-      - MONGO_URL=mongodb://mongo:27017
-      - ENVIRONMENT=production
-      - DB_NAME=${DB_NAME:-refmex}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
-      - ADMIN_TOKEN=${ADMIN_TOKEN}
-      - CORS_ORIGINS=${CORS_ORIGINS:-*}
+      MONGO_URL: mongodb://mongo:27017
+      DB_NAME: refmex_db
+      CORS_ORIGINS: "*"
+      ENVIRONMENT: production
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      ADMIN_TOKEN: ${ADMIN_TOKEN}
     depends_on:
-      mongo:
-        condition: service_healthy
-    expose:
-      - "8001"
+      - mongo
 
   frontend:
     build: ./frontend
     restart: unless-stopped
-    expose:
-      - "80"
     depends_on:
       - backend
 
