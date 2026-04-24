@@ -18,12 +18,22 @@ services:
       ADMIN_TOKEN: ${ADMIN_TOKEN}
     depends_on:
       - mongo
+    networks:
+      - default
+      - easypanel
 
   frontend:
     build: ./frontend
     restart: unless-stopped
     depends_on:
       - backend
+    networks:
+      - default
+      - easypanel
+
+networks:
+  easypanel:
+    external: true
 
 volumes:
   mongo_data:
