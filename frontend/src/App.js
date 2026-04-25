@@ -188,7 +188,7 @@ const OFFICES = [
     whatsapp: "529612298120",
     maps: "https://www.google.com/maps/search/Calle%2013a.%20Poniente%20Sur%20985/@16.74809455871582,-93.12777709960938,17z?hl=es",
     embedUrl: "https://maps.google.com/maps?q=16.748094,-93.127777&output=embed&z=15&hl=es",
-    image: "https://images.unsplash.com/photo-1518638150340-f706e86654de?auto=format&fit=crop&w=600&h=250&q=80",
+    image: "/images/sede-chiapas.jpg",
     lat: 16.748094,
     lng: -93.127777
   },
@@ -200,7 +200,7 @@ const OFFICES = [
     whatsapp: "528135865600",
     maps: "https://www.google.com/maps?q=Pino+Sur+209,+Valle+Sur,+67257+Cdad.+Benito+Ju%C3%A1rez,+N.L.",
     embedUrl: "https://maps.google.com/maps?q=Pino+Sur+209+Valle+del+Virrey+Juarez+Nuevo+Leon+67257&output=embed&z=15&hl=es",
-    image: "https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?auto=format&fit=crop&w=600&h=250&q=80",
+    image: "/images/sede-nuevo-leon.jpg",
     lat: 25.6749,
     lng: -100.2522
   },
@@ -212,7 +212,7 @@ const OFFICES = [
     whatsapp: "525575009770",
     maps: "https://www.google.com/maps/search/Valle%20de%20los%20piracantos%2048%20izcalli%20del%20valle%20tultitlan/@19.58583223,-99.18466924,17z?hl=es",
     embedUrl: "https://maps.google.com/maps?q=19.585832,-99.184669&output=embed&z=15&hl=es",
-    image: "https://images.unsplash.com/photo-1585464231875-d9ef1f5ad396?auto=format&fit=crop&w=600&h=250&q=80",
+    image: "/images/sede-estado-mexico.jpg",
     lat: 19.5858,
     lng: -99.1847
   }
@@ -1525,11 +1525,14 @@ const getAdminHeaders = () => ({
 const BlogAdmin = ({ onClose }) => {
   const [authenticated, setAuthenticated] = useState(!!sessionStorage.getItem('admin_token'));
   const [password, setPassword] = useState('');
+  const [tab, setTab] = useState('blog');
   const [articles, setArticles] = useState([]);
   const [editing, setEditing] = useState(null);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState(BLANK_ARTICLE);
   const [loading, setLoading] = useState(false);
+  const [applications, setApplications] = useState([]);
+  const [loadingApps, setLoadingApps] = useState(false);
 
   const loadArticles = async () => {
     try {
@@ -1540,7 +1543,23 @@ const BlogAdmin = ({ onClose }) => {
     }
   };
 
-  useEffect(() => { if (authenticated) loadArticles(); }, [authenticated]);
+  const loadApplications = async () => {
+    setLoadingApps(true);
+    try {
+      const res = await axios.get(`${API}/applications`, getAdminHeaders());
+      setApplications(res.data);
+    } catch {
+      toast.error('Error al cargar postulaciones');
+    } finally {
+      setLoadingApps(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!authenticated) return;
+    if (tab === 'blog') loadArticles();
+    if (tab === 'postulaciones') loadApplications();
+  }, [authenticated, tab]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -1601,16 +1620,32 @@ const BlogAdmin = ({ onClose }) => {
     <div className="fixed inset-0 bg-black/70 z-50 flex items-start justify-center overflow-y-auto p-4 pt-8">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl mb-8">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200 bg-slate-800 rounded-t-xl">
-          <h2 className="font-serif text-xl text-white">Administración del Blog</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
-            <X size={24} />
-          </button>
+        <div className="bg-slate-800 rounded-t-xl">
+          <div className="flex items-center justify-between px-6 pt-5 pb-0">
+            <h2 className="font-serif text-xl text-white">Panel de Administración</h2>
+            <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+              <X size={24} />
+            </button>
+          </div>
+          {authenticated && (
+            <div className="flex gap-1 px-6 pt-3">
+              {[{ id: 'blog', label: 'Blog' }, { id: 'postulaciones', label: 'Postulaciones' }].map(t => (
+                <button
+                  key={t.id}
+                  onClick={() => { setTab(t.id); setEditing(null); setCreating(false); }}
+                  className={`px-4 py-2 text-sm font-medium rounded-t transition-colors ${tab === t.id ? 'bg-white text-slate-800' : 'text-slate-400 hover:text-white'}`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="p-6">
           {/* Login Form */}
           {!authenticated ? (
+
             <form onSubmit={handleLogin} className="max-w-sm mx-auto py-8">
               <p className="text-slate-600 text-center mb-6">Ingresa la contraseña de administrador</p>
               <input
@@ -1625,6 +1660,59 @@ const BlogAdmin = ({ onClose }) => {
                 Ingresar
               </button>
             </form>
+          ) : tab === 'postulaciones' ? (
+            /* Postulaciones */
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="font-semibold text-slate-800">{applications.length} postulaciones recibidas</h3>
+                <button onClick={loadApplications} className="text-sm text-blue-600 hover:underline">
+                  Actualizar
+                </button>
+              </div>
+              {loadingApps ? (
+                <p className="text-center text-slate-400 py-8">Cargando...</p>
+              ) : applications.length === 0 ? (
+                <p className="text-center text-slate-400 py-8">No hay postulaciones aún.</p>
+              ) : (
+                <div className="space-y-3">
+                  {applications.map((app) => (
+                    <div key={app.id} className="p-4 border border-slate-200 rounded-lg hover:border-blue-200 transition-colors">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-slate-800">{app.nombre} <span className="text-slate-400 font-normal">· {app.edad} años</span></p>
+                          <p className="text-blue-600 text-sm mt-0.5">{app.puesto}</p>
+                          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-slate-500">
+                            {app.grado_academico && <span>Escolaridad: {app.grado_academico}</span>}
+                            {app.salario_deseado && <span>Salario deseado: {app.salario_deseado}</span>}
+                            <span>{new Date(app.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                          </div>
+                        </div>
+                        {app.cv_filename && (
+                          <a
+                            href={`${API}/applications/${app.id}/cv`}
+                            download={app.cv_filename}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              fetch(`${API}/applications/${app.id}/cv`, getAdminHeaders())
+                                .then(r => r.blob())
+                                .then(blob => {
+                                  const url = URL.createObjectURL(blob);
+                                  const a = document.createElement('a');
+                                  a.href = url; a.download = app.cv_filename; a.click();
+                                  URL.revokeObjectURL(url);
+                                });
+                            }}
+                            className="text-xs px-3 py-1.5 border border-green-300 text-green-700 rounded hover:bg-green-50 transition-colors flex-shrink-0"
+                          >
+                            Descargar CV
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           ) : (editing || creating) ? (
             /* Article Form */
             <form onSubmit={handleSave} className="space-y-4">

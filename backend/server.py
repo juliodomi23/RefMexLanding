@@ -12,6 +12,11 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, timezone
 import base64
+import aiosmtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -102,6 +107,49 @@ async def verify_admin(x_admin_token: Optional[str] = Header(None)):
         raise HTTPException(status_code=401, detail="No autorizado")
 
 
+async def send_application_email(nombre, edad, puesto, grado_academico, salario_deseado, cv_filename, cv_content):
+    smtp_host = os.environ.get("SMTP_HOST")
+    smtp_port = int(os.environ.get("SMTP_PORT", 587))
+    smtp_user = os.environ.get("SMTP_USER")
+    smtp_password = os.environ.get("SMTP_PASSWORD")
+    smtp_from = os.environ.get("SMTP_FROM", smtp_user)
+    notify_email = os.environ.get("NOTIFY_EMAIL", "contacto@refmex.com")
+
+    if not all([smtp_host, smtp_user, smtp_password]):
+        logging.warning("SMTP no configurado, se omite envío de correo")
+        return
+
+    msg = MIMEMultipart()
+    msg["From"] = smtp_from
+    msg["To"] = notify_email
+    msg["Subject"] = f"Nueva postulación: {puesto} — {nombre}"
+
+    body = f"""
+Nueva postulación recibida en REFMEX
+
+Nombre:           {nombre}
+Edad:             {edad}
+Puesto solicitado: {puesto}
+Grado académico:  {grado_academico or 'No especificado'}
+Salario deseado:  {salario_deseado or 'No especificado'}
+CV adjunto:       {'Sí — ' + cv_filename if cv_filename else 'No'}
+    """.strip()
+
+    msg.attach(MIMEText(body, "plain"))
+
+    if cv_content and cv_filename:
+        part = MIMEBase("application", "octet-stream")
+        part.set_payload(cv_content)
+        encoders.encode_base64(part)
+        part.add_header("Content-Disposition", f'attachment; filename="{cv_filename}"')
+        msg.attach(part)
+
+    try:
+        await aiosmtplib.send(msg, hostname=smtp_host, port=smtp_port, username=smtp_user, password=smtp_password, start_tls=True)
+    except Exception as e:
+        logging.error(f"Error enviando correo de postulación: {e}")
+
+
 # Routes
 @api_router.get("/")
 async def root():
@@ -157,7 +205,10 @@ async def create_job_application(
     }
     
     await db.job_applications.insert_one(doc)
-    
+
+    raw_cv = base64.b64decode(cv_data) if cv_data else None
+    await send_application_email(nombre, edad, puesto, grado_academico, salario_deseado, cv_filename, raw_cv)
+
     return {
         "success": True,
         "message": "Aplicación enviada exitosamente",
@@ -165,12 +216,23 @@ async def create_job_application(
     }
 
 @api_router.get("/applications", response_model=List[JobApplicationResponse])
-async def get_job_applications():
+async def get_job_applications(admin=Depends(verify_admin)):
     applications = await db.job_applications.find({}, {"_id": 0, "cv_data": 0}).to_list(1000)
     for app in applications:
         if isinstance(app.get('created_at'), str):
             app['created_at'] = datetime.fromisoformat(app['created_at'])
     return applications
+
+@api_router.get("/applications/{application_id}/cv")
+async def download_cv(application_id: str, admin=Depends(verify_admin)):
+    from fastapi.responses import Response
+    app = await db.job_applications.find_one({"id": application_id}, {"_id": 0})
+    if not app or not app.get("cv_data"):
+        raise HTTPException(status_code=404, detail="CV no encontrado")
+    cv_bytes = base64.b64decode(app["cv_data"])
+    filename = app.get("cv_filename", "cv.pdf")
+    return Response(content=cv_bytes, media_type="application/octet-stream",
+                    headers={"Content-Disposition": f'attachment; filename="{filename}"'})
 
 
 # Admin auth endpoint
