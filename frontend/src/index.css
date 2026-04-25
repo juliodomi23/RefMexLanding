@@ -25,6 +25,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
@@ -34,6 +35,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--refmex-bg);
     color: var(--refmex-text-dark);
+    overflow-x: hidden;
 }
 
 .font-serif {
@@ -48,8 +50,9 @@ body {
 .text-blue-gradient {
     background: linear-gradient(to right, #1E40AF, #3B82F6, #1E3A8A);
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
 }
 
 /* Blue gradient background */

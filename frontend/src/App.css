@@ -20,6 +20,7 @@
 /* Hero Section */
 .hero-section {
     min-height: 100vh;
+    min-height: 100svh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -52,8 +53,8 @@
 
 .hero-glow {
     position: absolute;
-    width: 600px;
-    height: 600px;
+    width: min(600px, 120vw);
+    height: min(600px, 120vw);
     background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
     pointer-events: none;
 }
@@ -94,6 +95,13 @@
     max-width: 280px;
     box-shadow: 0 10px 40px rgba(30, 64, 175, 0.3);
     border-radius: 0.5rem;
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .floating-card {
+        display: block;
+    }
 }
 
 /* Service Cards Grid */
@@ -158,8 +166,8 @@
 /* WhatsApp Floating Button */
 .whatsapp-float {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    right: calc(24px + env(safe-area-inset-right, 0px));
     z-index: 100;
     width: 60px;
     height: 60px;
@@ -171,6 +179,7 @@
     transition: all 0.3s ease;
     background-color: #25D366;
     box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+    touch-action: manipulation;
 }
 
 .whatsapp-float:hover {

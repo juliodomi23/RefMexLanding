@@ -563,10 +563,10 @@ const AboutSection = () => {
             {/* Image with Floating Card */}
             <div className="relative">
               <div className="overflow-hidden rounded-lg">
-                <img 
-                  src={IMAGES.team} 
-                  alt="Equipo REFMEX" 
-                  className="w-full h-[400px] lg:h-[500px] object-cover"
+                <img
+                  src={IMAGES.team}
+                  alt="Equipo REFMEX"
+                  className="w-full h-[260px] sm:h-[340px] lg:h-[500px] object-cover"
                   data-testid="about-image"
                 />
               </div>
@@ -972,7 +972,7 @@ const BlogSection = () => {
           </div>
 
           <Tabs defaultValue="empresarios" className="w-full" onValueChange={setActiveCategory}>
-            <TabsList className="flex justify-center gap-2 mb-12 bg-transparent">
+            <TabsList className="flex justify-center gap-2 mb-12 bg-transparent flex-wrap">
               {categories.map((cat) => (
                 <TabsTrigger
                   key={cat.id}
