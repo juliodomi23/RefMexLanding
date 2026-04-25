@@ -322,88 +322,280 @@ async def delete_blog_article(article_id: str, _=Depends(verify_admin)):
 
 # Seed initial blog articles (solo en no-producción)
 @api_router.post("/blog/seed")
-async def seed_blog_articles():
-    if os.environ.get("ENVIRONMENT") == "production":
-        raise HTTPException(status_code=403, detail="No disponible en producción")
+async def seed_blog_articles(_=Depends(verify_admin)):
     return await _seed_articles()
 
 
 async def _seed_articles():
-    existing = await db.blog_articles.count_documents({})
-    if existing > 0:
-        return {"message": "Blog ya tiene artículos", "count": existing}
-
     articles = [
         {
-            "id": str(uuid.uuid4()),
             "title": "Estrategias de Optimización Fiscal 2025",
             "excerpt": "Descubre las mejores estrategias legales para optimizar la carga fiscal de tu empresa este año.",
-            "content": "La optimización fiscal es fundamental para el crecimiento empresarial...",
+            "content": """La optimización fiscal es fundamental para el crecimiento empresarial sostenible. En REFMEX entendemos que pagar impuestos es una obligación, pero hacerlo de forma inteligente es un derecho de todo contribuyente.
+
+¿Qué es la optimización fiscal?
+La optimización fiscal consiste en aplicar, dentro del marco legal vigente, todas las deducciones, estímulos y beneficios que el SAT pone a disposición de personas físicas y morales. No se trata de evadir, sino de planear.
+
+Principales estrategias para 2025:
+
+1. Depreciación acelerada de activos
+Las empresas pueden deducir hasta el 100% del costo de ciertos activos en el ejercicio de adquisición, en lugar de hacerlo de forma gradual. Esto reduce la base gravable de forma significativa en el año de mayor inversión.
+
+2. Deducción inmediata de inversiones
+Aplica especialmente para empresas ubicadas en zonas prioritarias o que inviertan en sectores estratégicos. Consúltanos para saber si tu empresa califica.
+
+3. Estímulos fiscales por contratación
+Existen deducciones adicionales del 25% sobre el salario de trabajadores con discapacidad y adultos mayores. Si tu nómina incluye estos perfiles, puedes reducir tu ISR de forma legal.
+
+4. Consolidación de pérdidas fiscales
+Las pérdidas de ejercicios anteriores pueden amortizarse contra utilidades futuras hasta por 10 años. Llevar un registro ordenado de estas pérdidas es clave para aprovecharlas en el momento oportuno.
+
+5. Regímenes especiales: RESICO y RIF
+El Régimen Simplificado de Confianza (RESICO) ofrece tasas reducidas para personas físicas y morales que no superen ciertos límites de ingresos. Evaluar si tu empresa puede migrar a este régimen puede representar un ahorro considerable.
+
+Planificación fiscal a largo plazo
+La clave no está en reaccionar al cierre del ejercicio, sino en planear desde enero. En REFMEX acompañamos a nuestros clientes durante todo el año fiscal, revisando mensualmente su situación para anticipar obligaciones y maximizar beneficios.
+
+Agenda una asesoría con nuestro equipo y descubre cuánto puede ahorrar tu empresa este 2025.""",
             "category": "empresarios",
             "image_url": "https://images.unsplash.com/photo-1772588627354-ca3617853217?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjV8MHwxfHNlYXJjaHwxfHx0YXglMjBhY2NvdW50aW5nJTIwZmluYW5jZSUyMGRvY3VtZW50cyUyMHBhcGVyd29ya3xlbnwwfHx8fDE3NzU3Nzg4Mjd8MA&ixlib=rb-4.1.0&q=85",
             "read_time": "8 min",
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "updated_at": datetime.now(timezone.utc).isoformat()
         },
         {
-            "id": str(uuid.uuid4()),
             "title": "Cambios en el CFDI 4.0",
             "excerpt": "Todo lo que necesitas saber sobre las actualizaciones del Comprobante Fiscal Digital.",
-            "content": "El CFDI 4.0 trae cambios importantes en la facturación electrónica...",
+            "content": """El CFDI 4.0 representa la actualización más importante en facturación electrónica de los últimos años. Desde su entrada en vigor obligatoria, muchos contribuyentes siguen teniendo dudas sobre su correcta aplicación.
+
+¿Qué cambió respecto al CFDI 3.3?
+
+1. Datos del receptor obligatorios
+A diferencia de la versión anterior, el CFDI 4.0 exige que el nombre del receptor coincida exactamente con el registrado en el RFC ante el SAT. Un error en el nombre puede invalidar la factura como comprobante fiscal.
+
+2. Código postal del receptor
+Ahora es obligatorio incluir el código postal del domicilio fiscal del receptor, no del lugar de entrega. Este dato debe estar actualizado en el RFC.
+
+3. Exportación e información aduanera
+Se añadieron nuevos campos para operaciones de comercio exterior: tipo de operación (definitiva, temporal), clave de pedimento y número de pedimento aduanal.
+
+4. Régimen fiscal del receptor
+Por primera vez, el CFDI debe incluir el régimen fiscal bajo el cual tributa el receptor. Esto obliga a que emisor y receptor compartan información fiscal antes de emitir la factura.
+
+5. Uso del CFDI más detallado
+Los catálogos de "Uso del CFDI" se ampliaron. Es responsabilidad del receptor indicar correctamente el uso que dará al comprobante (G01 Adquisición de mercancias, D01 Honorarios médicos, etc.).
+
+Complemento de Carta Porte
+Para el traslado de mercancías por territorio nacional, el complemento de Carta Porte es obligatorio desde 2022. Con el CFDI 4.0, su correcta emisión se volvió aún más crítica para evitar multas en operativos de la SCT y el SAT.
+
+Complemento de Nómina 1.2
+La nómina digital también debe cumplir con los lineamientos del CFDI 4.0. Asegúrate de que tu sistema de nómina esté actualizado y que los datos de cada trabajador coincidan con su RFC.
+
+¿Qué pasa si emito un CFDI con errores?
+El SAT puede rechazarlo como deducción y, en casos graves, iniciar una auditoría. La cancelación y re-emisión es posible, pero tiene restricciones y plazos que debes conocer.
+
+En REFMEX te ayudamos a revisar tus procesos de facturación y a capacitar a tu equipo para emitir CFDIs correctos desde el primer intento.""",
             "category": "empresarios",
             "image_url": "https://images.unsplash.com/photo-1772588627474-ae6acc69ac42?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjV8MHwxfHNlYXJjaHwyfHx0YXglMjBhY2NvdW50aW5nJTIwZmluYW5jZSUyMGRvY3VtZW50cyUyMHBhcGVyd29ya3xlbnwwfHx8fDE3NzU3Nzg4Mjd8MA&ixlib=rb-4.1.0&q=85",
             "read_time": "6 min",
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "updated_at": datetime.now(timezone.utc).isoformat()
         },
         {
-            "id": str(uuid.uuid4()),
             "title": "Análisis de la Reforma Fiscal 2025",
             "excerpt": "Un análisis técnico profundo de los cambios más relevantes en materia tributaria.",
-            "content": "La reforma fiscal 2025 introduce modificaciones sustanciales...",
+            "content": """La Reforma Fiscal 2025 introduce modificaciones sustanciales al Código Fiscal de la Federación, la Ley del ISR y la Ley del IVA. A continuación presentamos un análisis técnico de los puntos más relevantes para despachos y contribuyentes especializados.
+
+Cambios en el Código Fiscal de la Federación (CFF)
+
+Nuevas facultades de comprobación digital
+El SAT amplió sus facultades para revisar buzón tributario, contratos digitales y operaciones realizadas a través de plataformas tecnológicas. Los contribuyentes deben mantener su buzón activo y atender notificaciones en un plazo máximo de 3 días hábiles.
+
+Presunción de operaciones inexistentes (EFOS/EDOS)
+Se endureció el procedimiento para contribuyentes publicados en las listas del artículo 69-B del CFF. La presunción de inexistencia ahora se extiende a terceros que hayan deducido operaciones con estos contribuyentes hasta por 5 años atrás.
+
+Modificaciones al ISR
+
+Tasa corporativa y retenciones
+La tasa general del 30% se mantiene, pero se modificaron los parámetros para la retención a residentes en el extranjero con ingresos de fuente de riqueza en México. Se reducen las tasas preferenciales de ciertos tratados para evitar su abuso.
+
+Precios de Transferencia
+Se actualizaron los márgenes de utilidad de referencia para los análisis de comparabilidad. Las empresas con operaciones intercompany deberán revisar sus estudios de precios de transferencia para el ejercicio 2025.
+
+Cambios en el IVA
+
+Acreditamiento en operaciones mixtas
+Se modificó la metodología para el cálculo del IVA acreditable en empresas que realizan tanto actividades gravadas como exentas. La nueva fórmula puede resultar en un menor acreditamiento para ciertos sectores.
+
+Plataformas digitales
+Se refuerza la obligación de retención para plataformas tecnológicas que operen en México. Las personas físicas que presten servicios a través de estas plataformas deben verificar que las retenciones sean correctamente reportadas.
+
+Implicaciones prácticas para despachos
+Los contadores y asesores fiscales deben actualizar sus procesos de dictamen, revisión de estados financieros y elaboración de declaraciones para incorporar los nuevos criterios. La capacitación continua del equipo es indispensable.
+
+En REFMEX estamos listos para acompañarte en la interpretación y aplicación de estos cambios.""",
             "category": "fiscalistas",
             "image_url": "https://images.unsplash.com/photo-1772588627499-baefc8ab0ce7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjV8MHwxfHNlYXJjaHwzfHx0YXglMjBhY2NvdW50aW5nJTIwZmluYW5jZSUyMGRvY3VtZW50cyUyMHBhcGVyd29ya3xlbnwwfHx8fDE3NzU3Nzg4Mjd8MA&ixlib=rb-4.1.0&q=85",
             "read_time": "12 min",
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "updated_at": datetime.now(timezone.utc).isoformat()
         },
         {
-            "id": str(uuid.uuid4()),
             "title": "Compliance Fiscal: Evita Multas",
             "excerpt": "Guía práctica para mantener el cumplimiento fiscal y evitar sanciones.",
-            "content": "El cumplimiento fiscal es una obligación que no debe tomarse a la ligera...",
+            "content": """El cumplimiento fiscal es una obligación que no debe tomarse a la ligera. Las multas del SAT pueden representar desde el 55% hasta el 75% del impuesto omitido, sin contar recargos y actualizaciones. Aquí te presentamos una guía práctica para mantener tu empresa en regla.
+
+Calendario fiscal: el punto de partida
+El primer paso es conocer con exactitud las fechas límite de cada obligación:
+
+- Declaraciones mensuales de IVA e ISR provisional: día 17 del mes siguiente
+- Declaración anual de personas morales: marzo del año siguiente
+- Declaración anual de personas físicas: abril del año siguiente
+- DIOT (Declaración Informativa de Operaciones con Terceros): día 17 del mes siguiente
+- Declaración informativa de sueldos y salarios: febrero
+
+Un error común es confundir las fechas del calendario bancario con las del SAT. Asegúrate de verificar siempre en el portal oficial.
+
+Buzón tributario activo
+Desde 2020 es obligatorio para todos los contribuyentes. El SAT envía notificaciones, requerimientos y resoluciones a través de él. Si no lo atiendes, las notificaciones se tienen por legalmente entregadas y los plazos corren aunque no las hayas leído.
+
+Conciliación contable-fiscal mensual
+Muchas multas provienen de diferencias entre lo declarado en DIOT y lo registrado contablemente. Una conciliación mensual entre:
+- Ingresos contables vs. ingresos declarados en IVA
+- Compras y gastos vs. IVA acreditado
+- Nómina contable vs. CFDI de nómina emitidos
+
+...permite detectar inconsistencias antes de que el SAT las detecte.
+
+Revisión de proveedores en listas negras
+Antes de deducir cualquier factura, verifica que tu proveedor no aparezca en las listas del artículo 69-B del CFF (EFOS). Una deducción con un proveedor en lista negra puede ser rechazada y generar un crédito fiscal a tu cargo.
+
+Corrección espontánea: una herramienta subestimada
+Si detectas un error en una declaración ya presentada, puedes corregirlo espontáneamente antes de que el SAT lo detecte. La corrección espontánea reduce o elimina las multas. No esperes a que llegue una auditoría.
+
+Acuerdos Conclusivos
+Si ya iniciaste una revisión con el SAT y existen diferencias, los Acuerdos Conclusivos ante PRODECON son una alternativa eficaz para regularizar tu situación con reducción de multas del 100% en la primera oportunidad.
+
+En REFMEX te acompañamos en cada paso del proceso de cumplimiento fiscal para que puedas enfocarte en hacer crecer tu negocio.""",
             "category": "fiscalistas",
             "image_url": "https://images.unsplash.com/photo-1621510007869-775c2657e580?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODR8MHwxfHNlYXJjaHwyfHxjb3Jwb3JhdGUlMjBleGVjdXRpdmVzJTIwbWVldGluZyUyMGJ1c2luZXNzJTIwcHJvZmVzc2lvbmFsc3xlbnwwfHx8fDE3NzU3Nzg4Mjd8MA&ixlib=rb-4.1.0&q=85",
             "read_time": "7 min",
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "updated_at": datetime.now(timezone.utc).isoformat()
         },
         {
-            "id": str(uuid.uuid4()),
             "title": "Deducciones Personales: Guía 2025",
             "excerpt": "Conoce todas las deducciones que puedes aplicar en tu declaración anual.",
-            "content": "Las deducciones personales son un derecho de todos los contribuyentes...",
+            "content": """Las deducciones personales son un derecho de todos los contribuyentes asalariados. Aplicarlas correctamente en tu declaración anual puede significar la diferencia entre pagar impuestos adicionales o recibir una devolución.
+
+¿Quién puede aplicar deducciones personales?
+Cualquier persona física que presente declaración anual ante el SAT, incluyendo asalariados con ingresos superiores a $400,000 pesos anuales y quienes obtengan ingresos de otras fuentes además de su salario.
+
+Deducciones personales permitidas en 2025:
+
+1. Honorarios médicos y dentales
+Son deducibles los pagos realizados a médicos, dentistas, psicólogos, nutriólogos y otros profesionales de la salud con título reconocido. También aplican los gastos hospitalarios, análisis clínicos, estudios de imagen y compra de lentes ópticos graduados (hasta $2,500 pesos).
+
+Requisito clave: deben pagarse con tarjeta de débito, crédito, transferencia o cheque. Los pagos en efectivo NO son deducibles.
+
+2. Primas de seguros de gastos médicos
+Las primas pagadas por seguros de gastos médicos mayores para ti, tu cónyuge, hijos y ascendientes son 100% deducibles, sin límite de monto (sujeto al límite global).
+
+3. Colegiaturas
+Aplica para pagos de educación básica (preescolar, primaria, secundaria), bachillerato y educación profesional técnica, con los siguientes límites anuales:
+- Preescolar: $14,200
+- Primaria: $12,900
+- Secundaria: $19,900
+- Profesional técnico: $17,100
+- Bachillerato: $24,500
+
+4. Intereses reales de crédito hipotecario
+Los intereses pagados a instituciones financieras por créditos hipotecarios destinados a tu casa habitación son deducibles. Solo aplica el componente "real" (descontando inflación).
+
+5. Donativos
+Los donativos a instituciones autorizadas por el SAT son deducibles hasta el 7% de tus ingresos acumulables del año anterior.
+
+6. Aportaciones complementarias al retiro
+Las aportaciones voluntarias a tu Afore o a planes personales de retiro (PPR) son deducibles hasta el 10% de tus ingresos acumulables, con un máximo de 5 UMAs anuales elevadas al año.
+
+Límite global de deducciones
+El total de tus deducciones personales no puede exceder el equivalente a 5 UMAs anuales o el 15% de tus ingresos totales, lo que resulte menor. Para 2025, esto representa aproximadamente $213,400 pesos.
+
+¿Cómo maximizar tus deducciones?
+- Solicita siempre CFDI por todos tus gastos médicos
+- Paga con medios electrónicos, nunca en efectivo
+- Guarda todos tus comprobantes durante al menos 5 años
+- Revisa en el SAT que los CFDIs emitidos a tu nombre estén correctos
+
+En REFMEX te ayudamos a preparar tu declaración anual y a identificar todas las deducciones a las que tienes derecho.""",
             "category": "asalariados",
             "image_url": "https://images.unsplash.com/photo-1758518727401-53823b36c47b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODR8MHwxfHNlYXJjaHwzfHxjb3Jwb3JhdGUlMjBleGVjdXRpdmVzJTIwbWVldGluZyUyMGJ1c2luZXNzJTIwcHJvZmVzc2lvbmFsc3xlbnwwfHx8fDE3NzU3Nzg4Mjd8MA&ixlib=rb-4.1.0&q=85",
             "read_time": "5 min",
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "updated_at": datetime.now(timezone.utc).isoformat()
         },
         {
-            "id": str(uuid.uuid4()),
             "title": "Tu Primera Declaración Anual",
             "excerpt": "Guía paso a paso para presentar tu primera declaración ante el SAT.",
-            "content": "Presentar tu primera declaración anual puede parecer complicado...",
+            "content": """Presentar tu primera declaración anual puede parecer complicado, pero con la información correcta es un proceso manejable. Esta guía te lleva paso a paso desde cero.
+
+¿Quién está obligado a presentar declaración anual?
+Como asalariado, estás obligado a presentar declaración anual si:
+- Tuviste ingresos por salarios superiores a $400,000 pesos en el año
+- Trabajaste para dos o más empleadores de forma simultánea
+- Obtuviste ingresos de fuentes distintas al salario (arrendamiento, honorarios, etc.)
+- Comunicaste por escrito a tu patrón que presentarías declaración por tu cuenta
+
+¿Cuándo presentarla?
+La declaración anual de personas físicas debe presentarse en abril del año siguiente al ejercicio que se declara. Por ejemplo, la declaración del ejercicio 2024 se presenta en abril de 2025.
+
+Paso 1: Ingresa al portal del SAT
+Ve a sat.gob.mx e ingresa con tu RFC y Contraseña o con tu e.firma (firma electrónica). Si no tienes contraseña, puedes generarla en el mismo portal o en cualquier oficina del SAT con tu RFC y CURP.
+
+Paso 2: Accede a "Declaraciones" → "Anuales"
+En el menú principal busca la sección de declaraciones anuales y selecciona el ejercicio fiscal que vas a declarar.
+
+Paso 3: Verifica la información prellenada
+El SAT prellenará automáticamente tu declaración con:
+- Los ingresos reportados por tu(s) empleador(es) mediante CFDI de nómina
+- Las retenciones de ISR que te aplicaron durante el año
+- Los CFDIs de deducciones personales vinculados a tu RFC
+
+Revisa cuidadosamente que toda la información sea correcta. Si hay errores en los CFDIs de tu nómina, deberás pedirle a tu empleador que los corrija antes de presentar.
+
+Paso 4: Captura tus deducciones personales
+Agrega manualmente las deducciones que el sistema no haya prellenado: colegiaturas, donativos, aportaciones al retiro. Para cada una necesitas el RFC del emisor y el folio del CFDI.
+
+Paso 5: Calcula el resultado
+El sistema calculará automáticamente si tienes:
+- Saldo a favor: el SAT te devuelve el exceso retenido (en promedio tarda 3 a 5 días hábiles si solicitas devolución a cuenta bancaria)
+- Impuesto a cargo: deberás pagar la diferencia antes del 30 de abril
+
+Paso 6: Envía y descarga el acuse
+Una vez revisada, envía tu declaración y descarga el acuse de recibo. Guárdalo; es tu comprobante de cumplimiento.
+
+Errores comunes en la primera declaración
+- No verificar que los CFDIs de nómina estén correctamente emitidos
+- Olvidar deducciones pagadas en efectivo (no son deducibles)
+- No capturar deducciones de los primeros meses del año
+- Proporcionar una CLABE interbancaria incorrecta para la devolución
+
+¿Tienes dudas? En REFMEX te asesoramos para presentar tu declaración correctamente y aprovechar al máximo tus deducciones.""",
             "category": "asalariados",
             "image_url": "https://images.unsplash.com/photo-1758518730178-6e237bc8b87d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODR8MHwxfHNlYXJjaHwxfHxjb3Jwb3JhdGUlMjBleGVjdXRpdmVzJTIwbWVldGluZyUyMGJ1c2luZXNzJTIwcHJvZmVzc2lvbmFsc3xlbnwwfHx8fDE3NzU3Nzg4Mjd8MA&ixlib=rb-4.1.0&q=85",
             "read_time": "10 min",
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "updated_at": datetime.now(timezone.utc).isoformat()
-        }
+        },
     ]
-    
-    await db.blog_articles.insert_many(articles)
-    return {"message": "Artículos de blog creados", "count": len(articles)}
+
+    updated = 0
+    inserted = 0
+    for article in articles:
+        existing = await db.blog_articles.find_one({"title": article["title"]})
+        now = datetime.now(timezone.utc).isoformat()
+        if existing:
+            await db.blog_articles.update_one(
+                {"title": article["title"]},
+                {"$set": {"content": article["content"], "excerpt": article["excerpt"], "updated_at": now}}
+            )
+            updated += 1
+        else:
+            article["id"] = str(uuid.uuid4())
+            article["created_at"] = now
+            article["updated_at"] = now
+            await db.blog_articles.insert_one(article)
+            inserted += 1
+
+    return {"message": "Artículos actualizados", "updated": updated, "inserted": inserted}
 
 
 # Include the router in the main app
