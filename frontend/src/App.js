@@ -1533,6 +1533,7 @@ const BlogAdmin = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [applications, setApplications] = useState([]);
   const [loadingApps, setLoadingApps] = useState(false);
+  const [appFilter, setAppFilter] = useState('pendiente');
 
   const loadArticles = async () => {
     try {
@@ -1662,57 +1663,103 @@ const BlogAdmin = ({ onClose }) => {
             </form>
           ) : tab === 'postulaciones' ? (
             /* Postulaciones */
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="font-semibold text-slate-800">{applications.length} postulaciones recibidas</h3>
-                <button onClick={loadApplications} className="text-sm text-blue-600 hover:underline">
-                  Actualizar
-                </button>
-              </div>
-              {loadingApps ? (
-                <p className="text-center text-slate-400 py-8">Cargando...</p>
-              ) : applications.length === 0 ? (
-                <p className="text-center text-slate-400 py-8">No hay postulaciones aún.</p>
-              ) : (
-                <div className="space-y-3">
-                  {applications.map((app) => (
-                    <div key={app.id} className="p-4 border border-slate-200 rounded-lg hover:border-blue-200 transition-colors">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-slate-800">{app.nombre} <span className="text-slate-400 font-normal">· {app.edad} años</span></p>
-                          <p className="text-blue-600 text-sm mt-0.5">{app.puesto}</p>
-                          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-slate-500">
-                            {app.grado_academico && <span>Escolaridad: {app.grado_academico}</span>}
-                            {app.salario_deseado && <span>Salario deseado: {app.salario_deseado}</span>}
-                            <span>{new Date(app.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+            (() => {
+              const updateStatus = async (id, status) => {
+                try {
+                  await axios.patch(`${API}/applications/${id}/status`, { status }, getAdminHeaders());
+                  setApplications(prev => prev.map(a => a.id === id ? { ...a, status } : a));
+                } catch {
+                  toast.error('Error al actualizar');
+                }
+              };
+              const downloadCv = (app) => {
+                fetch(`${API}/applications/${app.id}/cv`, getAdminHeaders())
+                  .then(r => r.blob())
+                  .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url; a.download = app.cv_filename; a.click();
+                    URL.revokeObjectURL(url);
+                  });
+              };
+              const filtered = applications.filter(a => (a.status || 'pendiente') === appFilter);
+              const counts = {
+                pendiente: applications.filter(a => (a.status || 'pendiente') === 'pendiente').length,
+                contactado: applications.filter(a => a.status === 'contactado').length,
+                descartado: applications.filter(a => a.status === 'descartado').length,
+              };
+              return (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
+                      {[
+                        { key: 'pendiente', label: 'Pendientes' },
+                        { key: 'contactado', label: 'Contactados' },
+                        { key: 'descartado', label: 'Descartados' },
+                      ].map(f => (
+                        <button key={f.key} onClick={() => setAppFilter(f.key)}
+                          className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${appFilter === f.key ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                          {f.label} <span className="ml-1 text-slate-400">({counts[f.key]})</span>
+                        </button>
+                      ))}
+                    </div>
+                    <button onClick={loadApplications} className="text-sm text-blue-600 hover:underline">Actualizar</button>
+                  </div>
+                  {loadingApps ? (
+                    <p className="text-center text-slate-400 py-8">Cargando...</p>
+                  ) : filtered.length === 0 ? (
+                    <p className="text-center text-slate-400 py-8">No hay postulaciones en esta sección.</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {filtered.map((app) => (
+                        <div key={app.id} className="p-4 border border-slate-200 rounded-lg">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-slate-800">{app.nombre} <span className="text-slate-400 font-normal">· {app.edad} años</span></p>
+                              <p className="text-blue-600 text-sm mt-0.5">{app.puesto}</p>
+                              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-slate-500">
+                                {app.grado_academico && <span>Escolaridad: {app.grado_academico}</span>}
+                                {app.salario_deseado && <span>Salario: {app.salario_deseado}</span>}
+                                <span>{new Date(app.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              {app.cv_filename && (
+                                <button onClick={() => downloadCv(app)}
+                                  className="text-xs px-3 py-1.5 border border-slate-300 text-slate-600 rounded hover:bg-slate-50 transition-colors">
+                                  CV
+                                </button>
+                              )}
+                              {appFilter !== 'contactado' && (
+                                <button onClick={() => updateStatus(app.id, 'contactado')}
+                                  title="Marcar como contactado"
+                                  className="w-8 h-8 flex items-center justify-center rounded-full border-2 border-green-400 text-green-600 hover:bg-green-50 transition-colors">
+                                  ✓
+                                </button>
+                              )}
+                              {appFilter !== 'descartado' && (
+                                <button onClick={() => updateStatus(app.id, 'descartado')}
+                                  title="Descartar"
+                                  className="w-8 h-8 flex items-center justify-center rounded-full border-2 border-red-300 text-red-500 hover:bg-red-50 transition-colors">
+                                  ✕
+                                </button>
+                              )}
+                              {appFilter !== 'pendiente' && (
+                                <button onClick={() => updateStatus(app.id, 'pendiente')}
+                                  title="Volver a pendiente"
+                                  className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+                                  ↩
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        {app.cv_filename && (
-                          <a
-                            href={`${API}/applications/${app.id}/cv`}
-                            download={app.cv_filename}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              fetch(`${API}/applications/${app.id}/cv`, getAdminHeaders())
-                                .then(r => r.blob())
-                                .then(blob => {
-                                  const url = URL.createObjectURL(blob);
-                                  const a = document.createElement('a');
-                                  a.href = url; a.download = app.cv_filename; a.click();
-                                  URL.revokeObjectURL(url);
-                                });
-                            }}
-                            className="text-xs px-3 py-1.5 border border-green-300 text-green-700 rounded hover:bg-green-50 transition-colors flex-shrink-0"
-                          >
-                            Descargar CV
-                          </a>
-                        )}
-                      </div>
+                      ))}
                     </div>
-                  ))}
+                  )}
                 </div>
-              )}
-            </div>
+              );
+            })()
           ) : (editing || creating) ? (
             /* Article Form */
             <form onSubmit={handleSave} className="space-y-4">

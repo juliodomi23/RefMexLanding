@@ -65,6 +65,7 @@ class JobApplicationResponse(BaseModel):
     salario_deseado: Optional[str] = None
     cv_filename: Optional[str] = None
     created_at: datetime
+    status: str = "pendiente"
 
 # Blog Models
 class BlogArticle(BaseModel):
@@ -224,6 +225,16 @@ async def get_job_applications(admin=Depends(verify_admin)):
         if isinstance(app.get('created_at'), str):
             app['created_at'] = datetime.fromisoformat(app['created_at'])
     return applications
+
+@api_router.patch("/applications/{application_id}/status")
+async def update_application_status(application_id: str, body: dict, admin=Depends(verify_admin)):
+    status = body.get("status")
+    if status not in ("pendiente", "contactado", "descartado"):
+        raise HTTPException(status_code=400, detail="Status inválido")
+    result = await db.job_applications.update_one({"id": application_id}, {"$set": {"status": status}})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Postulación no encontrada")
+    return {"success": True}
 
 @api_router.get("/applications/{application_id}/cv")
 async def download_cv(application_id: str, admin=Depends(verify_admin)):
