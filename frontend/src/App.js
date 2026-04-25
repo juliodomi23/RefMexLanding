@@ -20,7 +20,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 // Calendly URL - reemplaza con tu URL de Calendly
-const CALENDLY_URL = "https://calendly.com/refmex/asesoria";
+const CALENDLY_URL = "https://calendly.com/refmex/";
 
 // WhatsApp configuration
 const WHATSAPP_MAIN = "529612298120";
@@ -578,11 +578,11 @@ const AboutSection = () => {
           </div>
           
           {/* What We Do Section */}
-          <div className="mt-20 bg-slate-50 p-8 rounded-lg">
+          <div className="mt-20 bg-slate-50 p-8 rounded-lg text-center">
             <h3 className="font-serif text-2xl text-slate-800 mb-6">{t.about.commitment_title}</h3>
-            <div className="grid md:grid-cols-2 gap-6">
-              <p className="text-slate-600 leading-relaxed">{t.about.commitment_p1}</p>
-              <p className="text-slate-600 leading-relaxed">{t.about.commitment_p2}</p>
+            <div className="grid md:grid-cols-2 gap-6 text-left">
+              <p className="text-slate-600 leading-relaxed text-justify">{t.about.commitment_p1}</p>
+              <p className="text-slate-600 leading-relaxed text-justify">{t.about.commitment_p2}</p>
             </div>
           </div>
         </motion.div>
@@ -627,32 +627,13 @@ const ValuesSection = () => {
                   <div className="value-icon">
                     <Icon size={24} className="text-blue-600" />
                   </div>
-                  <h3 className="font-serif text-xl text-slate-800 mb-3">{value.title}</h3>
+                  <h3 className="font-serif text-xl font-bold text-slate-800 mb-3">{value.title}</h3>
                   <p className="text-slate-500 text-sm leading-relaxed">{value.desc}</p>
                 </motion.div>
               );
             })}
           </div>
 
-          {/* Ethics Section */}
-          <div className="bg-white p-8 rounded-lg border border-blue-100">
-            <h3 className="font-serif text-2xl text-slate-800 mb-6 flex items-center gap-3">
-              <Shield className="text-blue-600" size={28} />
-              {t.values.ethics_title}
-            </h3>
-            <p className="text-slate-600 mb-6">{t.values.ethics_intro}</p>
-            <div className="space-y-4">
-              {t.values.ethics_list.map((principle, idx) => (
-                <div key={idx} className="flex gap-4">
-                  <span className="text-blue-600 font-semibold">{principle.letter})</span>
-                  <div>
-                    <span className="font-semibold text-slate-800">{principle.title}.</span>
-                    <span className="text-slate-600 ml-1">{principle.desc}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </motion.div>
       </div>
     </section>
@@ -698,7 +679,7 @@ const ServicesSection = () => {
                   <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
                     <base.icon size={24} className="text-blue-600" />
                   </div>
-                  <h3 className="font-serif text-lg text-slate-800 mb-2">{svc.title}</h3>
+                  <h3 className="font-serif text-lg font-bold text-slate-800 mb-2">{svc.title}</h3>
                   <p className="text-slate-500 text-sm mb-4">{svc.desc}</p>
                   <span className="text-blue-600 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
                     {t.services.more} <ChevronRight size={16} />
