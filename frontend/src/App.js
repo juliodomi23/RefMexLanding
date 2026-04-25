@@ -534,10 +534,10 @@ const AboutSection = () => {
               <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-600">
                 <p className="text-blue-800 font-medium italic">"{t.about.quote}"</p>
               </div>
-              <p className="text-slate-600 leading-relaxed">{t.about.p1}</p>
-              <p className="text-slate-600 leading-relaxed">{t.about.p2}</p>
-              <p className="text-slate-600 leading-relaxed">{t.about.p3}</p>
-              <p className="text-slate-600 leading-relaxed">{t.about.p4}</p>
+              <p className="text-slate-600 leading-relaxed text-justify">{t.about.p1}</p>
+              <p className="text-slate-600 leading-relaxed text-justify">{t.about.p2}</p>
+              <p className="text-slate-600 leading-relaxed text-justify">{t.about.p3}</p>
+              <p className="text-slate-600 leading-relaxed text-justify">{t.about.p4}</p>
 
               {/* Features Grid */}
               <div className="grid grid-cols-2 gap-4 mt-8">
@@ -627,8 +627,8 @@ const ValuesSection = () => {
                   <div className="value-icon">
                     <Icon size={24} className="text-blue-600" />
                   </div>
-                  <h3 className="font-serif text-xl font-bold text-slate-800 mb-3">{value.title}</h3>
-                  <p className="text-slate-500 text-sm leading-relaxed">{value.desc}</p>
+                  <h3 className="font-serif text-2xl font-bold text-slate-800 mb-3">{value.title}</h3>
+                  <p className="text-slate-500 text-sm leading-relaxed text-justify">{value.desc}</p>
                 </motion.div>
               );
             })}
@@ -679,8 +679,8 @@ const ServicesSection = () => {
                   <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
                     <base.icon size={24} className="text-blue-600" />
                   </div>
-                  <h3 className="font-serif text-lg font-bold text-slate-800 mb-2">{svc.title}</h3>
-                  <p className="text-slate-500 text-sm mb-4">{svc.desc}</p>
+                  <h3 className="font-serif text-xl font-bold text-slate-800 mb-2">{svc.title}</h3>
+                  <p className="text-slate-500 text-sm mb-4 text-justify">{svc.desc}</p>
                   <span className="text-blue-600 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
                     {t.services.more} <ChevronRight size={16} />
                   </span>
@@ -1010,7 +1010,7 @@ const BlogSection = () => {
                             {article.read_time} lectura
                           </span>
                         </div>
-                        <h3 className="font-serif text-lg text-slate-800 mb-2">{article.title}</h3>
+                        <h3 className="font-serif text-lg font-bold text-slate-800 mb-2">{article.title}</h3>
                         <p className="text-slate-500 text-sm">{article.excerpt}</p>
                       </div>
                     </motion.div>

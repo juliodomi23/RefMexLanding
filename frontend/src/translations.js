@@ -20,7 +20,7 @@ const TRANSLATIONS = {
     },
     about: {
       eyebrow: "Conócenos",
-      title: "¿Quiénes Somos?",
+      title: "¿Quiénes somos?",
       subtitle: "Red de Estudios Fiscales de México",
       quote: "Todo gran proyecto comienza con una idea clara: ayudar a las personas y empresas a tomar mejores decisiones financieras.",
       p1: "Nuestra Firma REFMEX nació por la necesidad de compartir experiencias entre fiscalistas y abogados, actualmente todos socios ante el Instituto Mexicano Contadores Públicos, que avalan la capacidad técnica para el ejercicio de la profesión.",
@@ -35,7 +35,7 @@ const TRANSLATIONS = {
       feat_presence_desc: "3 estados de México",
       feat_cert: "Certificación",
       feat_cert_desc: "Capacidad técnica avalada",
-      card_title: "¿Qué Hacemos?",
+      card_title: "¿Qué hacemos?",
       card_desc: "Nos especializamos en auditoría, aseguramiento, consultoría, asesoría fiscal y servicios relacionados.",
       commitment_title: "Nuestro Compromiso",
       commitment_p1: "Nuestro propósito es generar un impacto significativo en cada cliente y en cada proyecto en el que participamos. Creemos en el valor de la integridad, el servicio al interés público y la innovación como motores de crecimiento.",
@@ -43,7 +43,7 @@ const TRANSLATIONS = {
     },
     values: {
       eyebrow: "Ética y Profesionalismo",
-      title: "Valores que nos Distinguen",
+      title: "Valores que nos distinguen",
       ethics_title: "Ética Profesional",
       ethics_intro: "Aplicamos a cabalidad los principios fundamentales establecidos en el código de ética profesional del contador independiente:",
       values_list: [
@@ -63,7 +63,7 @@ const TRANSLATIONS = {
     },
     services: {
       eyebrow: "Lo que hacemos",
-      title: "Nuestros Servicios",
+      title: "Nuestros servicios",
       subtitle: "Servicios especializados en materia fiscal, contable y legal adaptados a tus necesidades",
       more: "Ver más",
       cta: "Contáctanos para una Solución Personalizada",
@@ -208,7 +208,7 @@ const TRANSLATIONS = {
       feat_presence_desc: "3 states across Mexico",
       feat_cert: "Certification",
       feat_cert_desc: "Validated technical capacity",
-      card_title: "What We Do",
+      card_title: "What we do",
       card_desc: "We specialize in auditing, assurance, consulting, tax advisory and related services.",
       commitment_title: "Our Commitment",
       commitment_p1: "Our purpose is to generate a significant impact on every client and project we participate in. We believe in integrity, public interest service, and innovation as growth drivers.",
@@ -216,7 +216,7 @@ const TRANSLATIONS = {
     },
     values: {
       eyebrow: "Ethics & Professionalism",
-      title: "Values That Define Us",
+      title: "Values that define us",
       ethics_title: "Professional Ethics",
       ethics_intro: "We fully apply the fundamental principles established in the professional ethics code for independent accountants:",
       values_list: [
@@ -236,7 +236,7 @@ const TRANSLATIONS = {
     },
     services: {
       eyebrow: "What we do",
-      title: "Our Services",
+      title: "Our services",
       subtitle: "Specialized services in tax, accounting and legal matters tailored to your needs",
       more: "Learn more",
       cta: "Contact Us for a Custom Solution",
