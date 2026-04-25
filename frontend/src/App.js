@@ -932,6 +932,7 @@ const BlogSection = () => {
   const t = useT();
   const [articles, setArticles] = useState([]);
   const [activeCategory, setActiveCategory] = useState('empresarios');
+  const [selectedArticle, setSelectedArticle] = useState(null);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -994,14 +995,15 @@ const BlogSection = () => {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: false, amount: 0.2 }}
                       transition={{ duration: 0.3, delay: Math.min(idx * 0.05, 0.2) }}
-                      className="card-refmex overflow-hidden p-0"
+                      className="card-refmex overflow-hidden p-0 cursor-pointer group"
+                      onClick={() => setSelectedArticle(article)}
                       data-testid={`blog-article-${idx}`}
                     >
                       <div className="overflow-hidden">
-                        <img 
-                          src={article.image_url} 
+                        <img
+                          src={article.image_url}
                           alt={article.title}
-                          className="blog-card-image"
+                          className="blog-card-image group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>
                       <div className="p-6">
@@ -1034,6 +1036,49 @@ const BlogSection = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Article Modal */}
+      {selectedArticle && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          onClick={() => setSelectedArticle(null)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {selectedArticle.image_url && (
+              <img
+                src={selectedArticle.image_url}
+                alt={selectedArticle.title}
+                className="w-full h-56 object-cover rounded-t-xl"
+              />
+            )}
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs uppercase tracking-wider text-blue-600">
+                  {selectedArticle.read_time} lectura
+                </span>
+                <button
+                  onClick={() => setSelectedArticle(null)}
+                  className="text-slate-400 hover:text-slate-700 transition-colors"
+                >
+                  <X size={22} />
+                </button>
+              </div>
+              <h2 className="font-serif text-2xl font-bold text-slate-800 mb-4">{selectedArticle.title}</h2>
+              <p className="text-slate-500 text-sm mb-6 italic">{selectedArticle.excerpt}</p>
+              <div className="text-slate-600 leading-relaxed text-justify whitespace-pre-line">
+                {selectedArticle.content}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </section>
   );
 };
