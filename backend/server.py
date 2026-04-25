@@ -12,7 +12,6 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, timezone
 import base64
-import aiosmtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
@@ -145,7 +144,10 @@ CV adjunto:       {'Sí — ' + cv_filename if cv_filename else 'No'}
         msg.attach(part)
 
     try:
+        import aiosmtplib
         await aiosmtplib.send(msg, hostname=smtp_host, port=smtp_port, username=smtp_user, password=smtp_password, start_tls=True)
+    except ImportError:
+        logging.warning("aiosmtplib no instalado, se omite envío de correo")
     except Exception as e:
         logging.error(f"Error enviando correo de postulación: {e}")
 
