@@ -87,63 +87,63 @@ const SERVICES = [
     title: "Precios de Transferencia", 
     desc: "Estudios y documentación",
     fullDesc: "Los precios de transferencia regulan las operaciones entre partes relacionadas para asegurar que se realicen a valor de mercado. Se requiere documentación comprobatoria, estudios técnicos, análisis funcional y evidencia de comparabilidad conforme a la ley.",
-    whatsappMsg: "Hola, me gustaría contratar los servicios de: Precios de Transferencia"
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Precios de transferencia"
   },
   { 
     icon: Scale, 
     title: "Acuerdos Conclusivos", 
     desc: "Representación ante el SAT",
     fullDesc: "Los acuerdos conclusivos son mecanismos para resolver controversias fiscales con la autoridad sin llegar a juicio. Es necesario tener una auditoría en curso, pruebas documentales suficientes y disposición para negociar bajo supervisión de la autoridad competente.",
-    whatsappMsg: "Hola, me gustaría contratar los servicios de: Acuerdos Conclusivos"
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Acuerdos conclusivos"
   },
   { 
     icon: Gavel, 
     title: "Peritajes Contables", 
     desc: "Análisis forense y dictámenes",
     fullDesc: "Los peritajes contables consisten en la emisión de una opinión técnica sobre información financiera en procesos legales. Se requiere información contable completa, documentación soporte y la intervención de un perito certificado.",
-    whatsappMsg: "Hola, me gustaría contratar los servicios de: Peritajes Contables"
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Peritajes contables"
   },
   { 
     icon: Building2, 
     title: "Planeación Estratégica", 
     desc: "Consultoría fiscal y financiera",
     fullDesc: "La planeación estratégica fiscal y financiera busca optimizar recursos y reducir riesgos. Es indispensable contar con información financiera confiable, proyecciones, análisis de riesgos y conocimiento actualizado de la legislación.",
-    whatsappMsg: "Hola, me gustaría contratar los servicios de: Planeación Estratégica Fiscal y Financiera"
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Planeación estratégica fiscal y financiera"
   },
   { 
     icon: Shield, 
     title: "Defensa Penal-Fiscal", 
     desc: "Representación legal especializada",
     fullDesc: "La defensa penal-fiscal implica la representación legal ante delitos fiscales. Requiere documentación probatoria, estrategia legal sólida, cumplimiento de plazos procesales y asesoría especializada.",
-    whatsappMsg: "Hola, me gustaría contratar los servicios de: Defensa Penal-Fiscal"
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Defensa penal-fiscal"
   },
   { 
     icon: Users, 
     title: "Asesoría y Consultoría", 
     desc: "Acompañamiento profesional integral",
     fullDesc: "La asesoría y consultoría fiscal brinda orientación para el correcto cumplimiento de obligaciones. Es necesario proporcionar información veraz, documentación completa y mantener comunicación constante con el asesor.",
-    whatsappMsg: "Hola, me gustaría contratar los servicios de: Asesoría y Consultoría Fiscal"
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Asesoría y consultoría fiscal"
   },
   { 
     icon: ShieldCheck, 
     title: "Compliance Fiscal", 
     desc: "Cumplimiento normativo tributario",
     fullDesc: "El compliance fiscal asegura que la empresa cumpla con todas sus obligaciones tributarias. Requiere controles internos, políticas claras, revisiones periódicas y actualización constante ante cambios legales.",
-    whatsappMsg: "Hola, me gustaría contratar los servicios de: Compliance Fiscal"
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Compliance fiscal"
   },
   { 
     icon: ClipboardCheck, 
     title: "Compliance Laboral", 
     desc: "Verificación de obligaciones laborales",
     fullDesc: "El compliance laboral busca el cumplimiento de normas en materia de trabajo. Es indispensable contar con contratos laborales, registros de nómina, cumplimiento de prestaciones y apego a la legislación vigente.",
-    whatsappMsg: "Hola, me gustaría contratar los servicios de: Compliance Laboral"
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Compliance laboral"
   },
   { 
     icon: Lock, 
     title: "Compliance Corporativo", 
     desc: "Cumplimiento normativo empresarial",
     fullDesc: "El compliance corporativo asegura que la empresa cumpla con todas las normativas aplicables a su operación, incluyendo gobierno corporativo, prevención de riesgos y mejores prácticas empresariales.",
-    whatsappMsg: "Hola, me gustaría contratar los servicios de: Compliance Corporativo"
+    whatsappMsg: "Hola, me gustaría contratar los servicios de: Compliance corporativo"
   }
 ];
 
