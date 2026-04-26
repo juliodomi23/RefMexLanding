@@ -37,7 +37,7 @@ const TRANSLATIONS = {
       feat_cert_desc: "Capacidad técnica avalada",
       card_title: "¿Qué hacemos?",
       card_desc: "Nos especializamos en auditoría, aseguramiento, consultoría, asesoría fiscal y servicios relacionados.",
-      commitment_title: "Nuestro Compromiso",
+      commitment_title: "Nuestro compromiso",
       commitment_p1: "Nuestro propósito es generar un impacto significativo en cada cliente y en cada proyecto en el que participamos. Creemos en el valor de la integridad, el servicio al interés público y la innovación como motores de crecimiento.",
       commitment_p2: "Colaboramos estrechamente con nuestros clientes para ayudarles a alcanzar sus objetivos, sin importar el tamaño de sus retos o aspiraciones. Nuestro enfoque se basa en acompañarlos con soluciones estratégicas, confianza y profesionalismo para construir juntos un futuro mejor.",
     },

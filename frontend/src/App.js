@@ -19,8 +19,12 @@ import { Toaster, toast } from "sonner";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-// Calendly URL - reemplaza con tu URL de Calendly
+// Calendly URL
 const CALENDLY_URL = "https://calendly.com/refmex/";
+
+// Google Calendar Appointment Scheduling URL (para cuando esté listo)
+// Genera tu link en: Google Calendar → Crear → Citas → Copiar link de reserva
+// const GOOGLE_CALENDAR_URL = "https://calendar.google.com/calendar/appointments/schedules/REEMPLAZA_CON_TU_ID";
 
 // WhatsApp configuration
 const WHATSAPP_MAIN = "529612298120";
@@ -415,6 +419,18 @@ const Navbar = ({ language, setLanguage }) => {
                 {link.label}
               </a>
             ))}
+            {/* Language Selector - Mobile */}
+            <div className="flex gap-3 mt-2">
+              {LANGUAGES.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => { setLanguage(lang.code); setIsOpen(false); }}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${language === lang.code ? 'bg-blue-600 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                >
+                  {lang.flag} {lang.name}
+                </button>
+              ))}
+            </div>
             <a
               href={WHATSAPP_URL}
               target="_blank"
@@ -1181,6 +1197,17 @@ const CalendlyWidget = () => {
     />
   );
 };
+
+// Google Calendar Widget (para cuando esté listo — descomentar GOOGLE_CALENDAR_URL arriba y reemplazar <CalendlyWidget /> por <GoogleCalendarWidget />)
+// const GoogleCalendarWidget = () => (
+//   <iframe
+//     src={GOOGLE_CALENDAR_URL}
+//     style={{ border: 0, minWidth: '280px', height: '660px', width: '100%' }}
+//     frameBorder="0"
+//     title="Agenda tu asesoría"
+//     allowFullScreen
+//   />
+// );
 
 // Contact Section with Calendly + Redesigned Offices
 const ContactSection = () => {
