@@ -1284,18 +1284,22 @@ const ContactSection = () => {
                 {OFFICES.map((office, idx) => (
                   <div
                     key={idx}
-                    className="flex-1 border-b border-slate-100 p-3"
+                    className="flex-1 border-b border-slate-800 relative overflow-hidden"
+                    style={{ backgroundImage: `url(${office.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
                     data-testid={`office-card-${idx}`}
                   >
-                    <h4 className="font-semibold text-sm text-slate-800 mb-1">{office.city}</h4>
+                    {/* overlay */}
+                    <div className="absolute inset-0 bg-slate-900/70" />
+                    <div className="relative z-10 p-3 h-full flex flex-col justify-between">
+                    <h4 className="font-semibold text-sm text-white mb-1">{office.city}</h4>
                     <div className="flex items-start gap-1.5 mb-1">
-                      <MapPin size={12} className="text-blue-600 mt-0.5 flex-shrink-0" />
-                      <span className="text-slate-500 text-xs leading-snug">{office.address}</span>
+                      <MapPin size={12} className="text-blue-300 mt-0.5 flex-shrink-0" />
+                      <span className="text-slate-300 text-xs leading-snug">{office.address}</span>
                     </div>
                     {office.phones.map((phone, pIdx) => (
                       <div key={pIdx} className="flex items-center gap-1.5 mb-0.5">
-                        <Phone size={12} className="text-blue-600 flex-shrink-0" />
-                        <span className="text-slate-600 text-xs">{phone}</span>
+                        <Phone size={12} className="text-blue-300 flex-shrink-0" />
+                        <span className="text-slate-200 text-xs">{phone}</span>
                       </div>
                     ))}
                     <div className="mt-2 flex gap-1.5">
@@ -1303,7 +1307,7 @@ const ContactSection = () => {
                         href={`https://wa.me/${office.whatsapp}?text=${encodeURIComponent("Hola, me comunico desde su sitio web.")}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-1 bg-blue-600 text-white text-xs py-1.5 px-2 rounded hover:bg-blue-700 transition-colors"
+                        className="flex-1 flex items-center justify-center gap-1 bg-blue-600 text-white text-xs py-1.5 px-2 rounded hover:bg-blue-500 transition-colors"
                         data-testid={`office-whatsapp-${idx}`}
                       >
                         <MessageCircle size={12} />
@@ -1313,11 +1317,12 @@ const ContactSection = () => {
                         href={office.maps}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-1 border border-blue-600 text-blue-600 text-xs py-1.5 px-2 rounded hover:bg-blue-50 transition-colors"
+                        className="flex-1 flex items-center justify-center gap-1 border border-white/40 text-white text-xs py-1.5 px-2 rounded hover:bg-white/10 transition-colors"
                       >
                         <MapPin size={12} />
                         {t.contact.see_map}
                       </a>
+                    </div>
                     </div>
                   </div>
                 ))}
