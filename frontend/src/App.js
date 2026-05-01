@@ -19,12 +19,7 @@ import { Toaster, toast } from "sonner";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-// Calendly URL
-const CALENDLY_URL = "https://calendly.com/refmex/";
-
-// Google Calendar Appointment Scheduling URL (para cuando esté listo)
-// Genera tu link en: Google Calendar → Crear → Citas → Copiar link de reserva
-// const GOOGLE_CALENDAR_URL = "https://calendar.google.com/calendar/appointments/schedules/REEMPLAZA_CON_TU_ID";
+const GOOGLE_CALENDAR_URL = "https://calendar.app.google/hcpS9FjJr98ThiSt6";
 
 // WhatsApp configuration
 const WHATSAPP_MAIN = "529612298120";
@@ -190,6 +185,7 @@ const OFFICES = [
     address: "Calle 13a. Poniente Sur 985, Chiapas",
     phones: ["961 229 8120", "961 128 9177"],
     whatsapp: "529612298120",
+    whatsapps: ["529612298120", "529611289177"],
     maps: "https://www.google.com/maps/search/Calle%2013a.%20Poniente%20Sur%20985/@16.74809455871582,-93.12777709960938,17z?hl=es",
     embedUrl: "https://maps.google.com/maps?q=16.748094,-93.127777&output=embed&z=15&hl=es",
     image: "/images/sede-chiapas.jpg",
@@ -1175,39 +1171,15 @@ const OfficesMap = () => {
   );
 };
 
-// Calendly Inline Widget
-const CalendlyWidget = () => {
-  useEffect(() => {
-    if (window.Calendly) {
-      window.Calendly.initInlineWidget({
-        url: CALENDLY_URL,
-        parentElement: document.getElementById('calendly-inline'),
-        prefill: {},
-        utm: {}
-      });
-    }
-  }, []);
-
-  return (
-    <div
-      id="calendly-inline"
-      className="calendly-inline-widget w-full"
-      data-url={CALENDLY_URL}
-      style={{ minWidth: '280px', height: '660px' }}
-    />
-  );
-};
-
-// Google Calendar Widget (para cuando esté listo — descomentar GOOGLE_CALENDAR_URL arriba y reemplazar <CalendlyWidget /> por <GoogleCalendarWidget />)
-// const GoogleCalendarWidget = () => (
-//   <iframe
-//     src={GOOGLE_CALENDAR_URL}
-//     style={{ border: 0, minWidth: '280px', height: '660px', width: '100%' }}
-//     frameBorder="0"
-//     title="Agenda tu asesoría"
-//     allowFullScreen
-//   />
-// );
+const GoogleCalendarWidget = () => (
+  <iframe
+    src={GOOGLE_CALENDAR_URL}
+    style={{ border: 0, minWidth: '280px', height: '660px', width: '100%' }}
+    frameBorder="0"
+    title="Agenda tu asesoría"
+    allowFullScreen
+  />
+);
 
 // Contact Section with Calendly + Redesigned Offices
 const ContactSection = () => {
@@ -1280,7 +1252,7 @@ const ContactSection = () => {
                     </button>
                   </div>
                   <div className="p-0">
-                    <CalendlyWidget />
+                    <GoogleCalendarWidget />
                   </div>
                   <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
                     <p className="text-slate-500 text-sm">{t.contact.calendly_instant}</p>
@@ -1306,56 +1278,46 @@ const ContactSection = () => {
               <p className="text-slate-500 text-sm mt-2">{t.contact.offices_hint}</p>
             </div>
 
-            <div className="flex flex-col lg:flex-row rounded-xl overflow-hidden border border-slate-200 shadow-sm" style={{ minHeight: '520px' }}>
+            <div className="flex flex-col lg:flex-row rounded-xl overflow-hidden border border-slate-200 shadow-sm" style={{ minHeight: '380px' }}>
               {/* Left: Office Cards */}
-              <div className="lg:w-2/5 overflow-y-auto" style={{ maxHeight: '560px' }}>
+              <div className="lg:w-2/5 flex flex-col">
                 {OFFICES.map((office, idx) => (
                   <div
                     key={idx}
-                    className="border-b border-slate-100"
+                    className="flex-1 border-b border-slate-100 p-3"
                     data-testid={`office-card-${idx}`}
                   >
-                    <div className="overflow-hidden h-36">
-                      <img
-                        src={office.image}
-                        alt={office.city}
-                        className="w-full h-full object-cover"
-                        onError={(e) => { e.target.style.display = 'none'; }}
-                      />
+                    <h4 className="font-semibold text-sm text-slate-800 mb-1">{office.city}</h4>
+                    <div className="flex items-start gap-1.5 mb-1">
+                      <MapPin size={12} className="text-blue-600 mt-0.5 flex-shrink-0" />
+                      <span className="text-slate-500 text-xs leading-snug">{office.address}</span>
                     </div>
-                    <div className="p-4">
-                      <h4 className="font-semibold text-base text-slate-800 mb-2">{office.city}</h4>
-                      <div className="flex items-start gap-2 mb-2">
-                        <MapPin size={14} className="text-blue-600 mt-0.5 flex-shrink-0" />
-                        <span className="text-slate-500 text-xs leading-snug">{office.address}</span>
+                    {office.phones.map((phone, pIdx) => (
+                      <div key={pIdx} className="flex items-center gap-1.5 mb-0.5">
+                        <Phone size={12} className="text-blue-600 flex-shrink-0" />
+                        <span className="text-slate-600 text-xs">{phone}</span>
                       </div>
-                      {office.phones.map((phone, pIdx) => (
-                        <div key={pIdx} className="flex items-center gap-2 mb-1">
-                          <Phone size={13} className="text-blue-600 flex-shrink-0" />
-                          <span className="text-slate-600 text-sm">{phone}</span>
-                        </div>
-                      ))}
-                      <div className="mt-3 flex gap-2">
-                        <a
-                          href={`https://wa.me/${office.whatsapp}?text=${encodeURIComponent("Hola, me comunico desde su sitio web.")}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 flex items-center justify-center gap-1 bg-blue-600 text-white text-xs py-2 px-3 rounded hover:bg-blue-700 transition-colors"
-                          data-testid={`office-whatsapp-${idx}`}
-                        >
-                          <MessageCircle size={13} />
-                          {t.contact.whatsapp}
-                        </a>
-                        <a
-                          href={office.maps}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 flex items-center justify-center gap-1 border border-blue-600 text-blue-600 text-xs py-2 px-3 rounded hover:bg-blue-50 transition-colors"
-                        >
-                          <MapPin size={13} />
-                          {t.contact.see_map}
-                        </a>
-                      </div>
+                    ))}
+                    <div className="mt-2 flex gap-1.5">
+                      <a
+                        href={`https://wa.me/${office.whatsapp}?text=${encodeURIComponent("Hola, me comunico desde su sitio web.")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 flex items-center justify-center gap-1 bg-blue-600 text-white text-xs py-1.5 px-2 rounded hover:bg-blue-700 transition-colors"
+                        data-testid={`office-whatsapp-${idx}`}
+                      >
+                        <MessageCircle size={12} />
+                        {t.contact.whatsapp}
+                      </a>
+                      <a
+                        href={office.maps}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 flex items-center justify-center gap-1 border border-blue-600 text-blue-600 text-xs py-1.5 px-2 rounded hover:bg-blue-50 transition-colors"
+                      >
+                        <MapPin size={12} />
+                        {t.contact.see_map}
+                      </a>
                     </div>
                   </div>
                 ))}
@@ -1451,7 +1413,7 @@ const Footer = ({ onAdminClick }) => {
                 <li key={idx}>
                   <p className="text-blue-300 text-xs mb-1">{office.name}</p>
                   {office.phones.map((phone, pIdx) => (
-                    <a key={pIdx} href={`https://wa.me/${office.whatsapp}`} target="_blank" rel="noopener noreferrer"
+                    <a key={pIdx} href={`https://wa.me/${(office.whatsapps && office.whatsapps[pIdx]) || office.whatsapp}`} target="_blank" rel="noopener noreferrer"
                       className="flex items-center gap-2 text-blue-100/70 text-sm hover:text-blue-300 transition-colors">
                       <Phone size={12} className="text-blue-400" />
                       {phone}
